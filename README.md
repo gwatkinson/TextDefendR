@@ -26,3 +26,8 @@ pip install -e .
 ```bash
 pre-commit install
 ```
+
+4. (Optional) Install Pytorch CUDA
+```bash
+poe torch_cuda
+```
