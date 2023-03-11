@@ -1,0 +1,98 @@
+Namespace(dir_dataset='data/', dir_out='attacks/', task_name='sentiment', model_name='distilcamembert', pretrained_model_name_or_path='baptiste-pasquier/distilcamembert-allocine', model_max_seq_len=512, model_batch_size=32, dataset_name='allocine', target_model_train_dataset='allocine', attack_toolchain='textattack', attack_name='deepwordbug', attack_query_budget=0, attack_n_samples=10, random_seed=0)
+Timestamp: 2023-03-11 22:24:31.881503
+
+Loading trained model...
+
+Loading test data set...
+Making prediction on the test set...
+No. test samples: 20,000
+Accuracy: 0.971
+Time: 00:01:10
+
+Beginning attacks...
+No. test: 20,000, no. candidates: 10
+Result 1 (dataset=allocine, model=distilcamembert, attack=deepwordbug, no. queries=82):
+Positive (100%) --> Negative (86%)
+
+Result 2 (dataset=allocine, model=distilcamembert, attack=deepwordbug, no. queries=65):
+Negative (62%) --> Positive (99%)
+
+Result 3 (dataset=allocine, model=distilcamembert, attack=deepwordbug, no. queries=24):
+Positive (99%) --> Negative (98%)
+
+Result 4 (dataset=allocine, model=distilcamembert, attack=deepwordbug, no. queries=57):
+Negative (100%) --> Positive (71%)
+
+Result 5 (dataset=allocine, model=distilcamembert, attack=deepwordbug, no. queries=76):
+Negative (100%) --> Positive (57%)
+
+Result 6 (dataset=allocine, model=distilcamembert, attack=deepwordbug, no. queries=504):
+Positive (100%) --> [FAILED]
+
+Result 7 (dataset=allocine, model=distilcamembert, attack=deepwordbug, no. queries=89):
+Positive (100%) --> Negative (88%)
+
+Result 8 (dataset=allocine, model=distilcamembert, attack=deepwordbug, no. queries=93):
+Positive (100%) --> Negative (55%)
+
+Result 9 (dataset=allocine, model=distilcamembert, attack=deepwordbug, no. queries=301):
+Negative (100%) --> [FAILED]
+
+Result 10 (dataset=allocine, model=distilcamembert, attack=deepwordbug, no. queries=145):
+Positive (100%) --> Negative (61%)
+
+
+Saving results to attacks/allocine\distilcamembert\textattack\deepwordbug\10/...
+
+Results:
+    scenario target_model_dataset     target_model attack_toolchain  \
+0  sentiment             allocine  distilcamembert       textattack
+1  sentiment             allocine  distilcamembert       textattack
+2  sentiment             allocine  distilcamembert       textattack
+3  sentiment             allocine  distilcamembert       textattack
+4  sentiment             allocine  distilcamembert       textattack
+
+   attack_name                                      original_text  \
+0  deepwordbug  Magnifique épopée, une belle histoire, touchan...
+1  deepwordbug  Je n'ai pas aimé mais pourtant je lui mets 2 é...
+2  deepwordbug  Un dessin animé qui brille par sa féerie et se...
+3  deepwordbug  Si c'est là le renouveau du cinéma français, c...
+4  deepwordbug  Et pourtant on s’en Doutait !Second volet très...
+
+                                      perturbed_text  \
+0  Mcgnifique éApopée, ne belle ihstoire, tuochan...
+1  Je n'ai pas imé mais pourtant je lui mets 2 ét...
+2  nU dessin animé qui brillBe par sa féerim et s...
+3  Ti Ec'est là le renouveau du cinéma français, ...
+4  t plurtant on s’eU Doutait !Sceond olet très m...
+
+                                original_output  \
+0  [0.00047096062917262316, 0.9995290040969849]
+1      [0.6205608248710632, 0.3794391453266144]
+2    [0.006190015003085136, 0.9938099980354309]
+3   [0.999725878238678, 0.00027412595227360725]
+4  [0.9996825456619263, 0.00031743431463837624]
+
+                            perturbed_output   status  \
+0  [0.8554291725158691, 0.14457082748413086]  success
+1  [0.01314047072082758, 0.9868595600128174]  success
+2  [0.981940746307373, 0.018059266731142998]  success
+3   [0.29408329725265503, 0.705916702747345]  success
+4  [0.43405482172966003, 0.5659451484680176]  success
+
+  target_model_train_dataset  test_index  ground_truth  num_queries  \
+0                   allocine           0             1           82
+1                   allocine           1             0           65
+2                   allocine           2             1           24
+3                   allocine           3             0           57
+4                   allocine           4             0           76
+
+   frac_words_changed  attacked_all_instances
+0            0.333333                    True
+1            0.016393                    True
+2            0.272727                    True
+3            0.250000                    True
+4            0.588235                    True
+
+Attack time: 00:00:20
+Total time: 00:01:32
