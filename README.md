@@ -131,3 +131,5 @@ options:
 ```
 
 :bulb: Notebook step-by-step: [run_attack.ipynb](/notebooks/run_attack.ipynb)
+
+:bulb: Notebook attack statistics: [run_attack.ipynb](/notebooks/attack_statistics.ipynb)
