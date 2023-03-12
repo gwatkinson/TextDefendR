@@ -1,0 +1,14 @@
+dir_dataset: data/
+dir_out: attacks/
+task_name: sentiment
+model_name: distilcamembert
+pretrained_model_name_or_path: baptiste-pasquier/distilcamembert-allocine
+model_max_seq_len: 512
+model_batch_size: 32
+dataset_name: allocine
+target_model_train_dataset: allocine
+attack_toolchain: textattack
+attack_name: textfooler
+attack_query_budget: 0
+attack_n_samples: 2000
+random_seed: 0

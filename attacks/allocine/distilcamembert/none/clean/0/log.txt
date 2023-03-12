@@ -1,0 +1,60 @@
+Namespace(dir_dataset='data/', dir_out='attacks/', task_name='sentiment', model_name='distilcamembert', pretrained_model_name_or_path='baptiste-pasquier/distilcamembert-allocine', model_max_seq_len=512, model_batch_size=32, dataset_name='allocine', target_model_train_dataset='allocine', attack_toolchain='none', attack_name='clean', attack_query_budget=0, attack_n_samples=0, random_seed=0)
+Timestamp: 2023-03-12 15:38:14.319846
+
+Loading trained model...
+
+Loading test data set...
+Making prediction on the test set...
+No. test samples: 20,000
+Accuracy: 0.971
+Time: 00:01:08
+
+Results:
+    scenario target_model_dataset     target_model attack_toolchain  \
+0  sentiment             allocine  distilcamembert             none
+1  sentiment             allocine  distilcamembert             none
+2  sentiment             allocine  distilcamembert             none
+3  sentiment             allocine  distilcamembert             none
+4  sentiment             allocine  distilcamembert             none
+
+  attack_name                                      original_text  \
+0       clean  Magnifique épopée, une belle histoire, touchan...
+1       clean  Je n'ai pas aimé mais pourtant je lui mets 2 é...
+2       clean  Un dessin animé qui brille par sa féerie et se...
+3       clean  Si c'est là le renouveau du cinéma français, c...
+4       clean  Et pourtant on s’en Doutait !Second volet très...
+
+                                      perturbed_text  \
+0  Magnifique épopée, une belle histoire, touchan...
+1  Je n'ai pas aimé mais pourtant je lui mets 2 é...
+2  Un dessin animé qui brille par sa féerie et se...
+3  Si c'est là le renouveau du cinéma français, c...
+4  Et pourtant on s’en Doutait !Second volet très...
+
+                                original_output  \
+0     [0.0004709608615801346, 0.99952903913842]
+1      [0.6205607487892884, 0.3794392512107116]
+2    [0.006190023822078167, 0.9938099761779218]
+3   [0.9997258739819282, 0.0002741260180717459]
+4  [0.9996825656677577, 0.00031743433224216944]
+
+                               perturbed_output status  \
+0     [0.0004709608615801346, 0.99952903913842]  clean
+1      [0.6205607487892884, 0.3794392512107116]  clean
+2    [0.006190023822078167, 0.9938099761779218]  clean
+3   [0.9997258739819282, 0.0002741260180717459]  clean
+4  [0.9996825656677577, 0.00031743433224216944]  clean
+
+  target_model_train_dataset  test_index  ground_truth  num_queries  \
+0                   allocine           0             1            0
+1                   allocine           1             0            0
+2                   allocine           2             1            0
+3                   allocine           3             0            0
+4                   allocine           4             0            0
+
+   frac_words_changed  attacked_all_instances
+0                   0                    True
+1                   0                    True
+2                   0                    True
+3                   0                    True
+4                   0                    True
