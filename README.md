@@ -10,6 +10,9 @@
     - [2.1.2. Fine-tune the model (optional)](#212-fine-tune-the-model-optional)
     - [2.1.3. Test `textattack` (optional)](#213-test-textattack-optional)
     - [2.1.4. Generate the TCAB dataset](#214-generate-the-tcab-dataset)
+  - [2.2. TCAB Benchmark](#22-tcab-benchmark)
+    - [2.2.1. Generate the whole dataset](#221-generate-the-whole-dataset)
+    - [2.2.2. Encode the dataset with feature extraction](#222-encode-the-dataset-with-feature-extraction)
 
 
 ## 1. Installation
@@ -133,3 +136,73 @@ options:
 :bulb: Notebook step-by-step: [run_attack.ipynb](/notebooks/run_attack.ipynb)
 
 :bulb: Notebook attack statistics: [run_attack.ipynb](/notebooks/attack_statistics.ipynb)
+
+
+### 2.2. TCAB Benchmark
+
+:globe_with_meridians: Reference: https://github.com/react-nlp/tcab_benchmark
+
+#### 2.2.1. Generate the whole dataset
+
+Run
+```{bash}
+python scripts/generate_catted_dataset.py
+```
+
+#### 2.2.2. Encode the dataset with feature extraction
+
+- TP: text properties
+- TM: target model properties
+- LM: language model properties
+
+Run
+```{bash}
+python scripts/encode_main.py
+```
+:memo: Usage
+```
+usage: encode_main.py [-h] [--target_model TARGET_MODEL]
+                      [--target_model_dataset TARGET_MODEL_DATASET]
+                      [--target_model_train_dataset TARGET_MODEL_TRAIN_DATASET]
+                      [--attack_name ATTACK_NAME]
+                      [--max_clean_instance MAX_CLEAN_INSTANCE] [--tp_model TP_MODEL]  
+                      [--lm_perplexity_model LM_PERPLEXITY_MODEL]
+                      [--lm_proba_model LM_PROBA_MODEL]
+                      [--target_model_name_or_path TARGET_MODEL_NAME_OR_PATH]
+                      [--test TEST] [--disable_tqdm DISABLE_TQDM]
+
+options:
+  -h, --help            show this help message and exit
+  --target_model TARGET_MODEL
+                        Target model type. (default: distilcamembert)
+  --target_model_dataset TARGET_MODEL_DATASET
+                        Dataset attacked. (default: allocine)
+  --target_model_train_dataset TARGET_MODEL_TRAIN_DATASET
+                        Dataset used to train the target model. (default: allocine)  
+  --attack_name ATTACK_NAME
+                        Name of the attack or ALL or ALLBUTCLEAN. (default: ALL)  
+  --max_clean_instance MAX_CLEAN_INSTANCE
+                        Only consider certain number of clean instances; 0 = consider  
+                        all. (default: 0)
+  --tp_model TP_MODEL   Sentence embeddings model for text properties features.
+                        (default: sentence-transformers/bert-base-nli-mean-tokens)  
+  --lm_perplexity_model LM_PERPLEXITY_MODEL
+                        GPT2 model for lm perplexity features. (e.g. gpt2,
+                        gpt2-medium, gpt2-large, gpt2-xl, distilgpt2) (default: gpt2)  
+  --lm_proba_model LM_PROBA_MODEL
+                        Roberta model for lm proba features. (e.g. roberta-base,  
+                        roberta-large, distilroberta-base) (default: roberta-base)  
+  --target_model_name_or_path TARGET_MODEL_NAME_OR_PATH
+                        Fine-tuned target model to load from cache or download
+                        (HuggingFace). (default: baptiste-pasquier/distilcamembert-  
+                        allocine)
+  --test TEST           If True only computes first 10 instance. (default: False)  
+  --disable_tqdm DISABLE_TQDM
+                        If True silent tqdm progress bar. (default: False)
+```
+
+:bulb: Notebook step-by-step: [run_encode_main.ipynb](/notebooks/run_encode_main.ipynb)
+
+:bulb: Notebook step-by-step for encode_samplewise_features: [encode_samplewise_features.ipynb](/notebooks/encode_samplewise_features.ipynb)
+
+:bulb: Notebook for feature extraction: [feature_extraction.ipynb](/notebooks/feature_extraction.ipynb)
