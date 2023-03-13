@@ -4,11 +4,10 @@ import torch
 from tqdm import tqdm
 from transformers import (
     AutoModel,
+    AutoModelForMaskedLM,
     AutoTokenizer,
     GPT2LMHeadModel,
     GPT2TokenizerFast,
-    RobertaForMaskedLM,
-    RobertaTokenizer,
 )
 
 from nlp_adversarial_attacks.models.model_loading import load_target_model
@@ -175,10 +174,10 @@ def encode_lm_proba(df, holder, lm_masked_model_roberta_name, disable_tqdm=False
     # load mlm
     print("--- loading lm")
     print(f"RobertaForMaskedLM: {lm_masked_model_roberta_name}")
-    lm_masked_model_roberta = RobertaForMaskedLM.from_pretrained(
+    lm_masked_model_roberta = AutoModelForMaskedLM.from_pretrained(
         lm_masked_model_roberta_name, return_dict=True
     ).to(CUDA_DEVICE)
-    lm_masked_tokenizer_roberta = RobertaTokenizer.from_pretrained(
+    lm_masked_tokenizer_roberta = AutoTokenizer.from_pretrained(
         lm_masked_model_roberta_name
     )
     print("--- lm loaded")
@@ -300,6 +299,70 @@ def encode_all_properties(
     tm_model,
     tm_model_name_or_path,
     disable_tqdm=False,
+    tasks="ALL",
+):
+    """
+    Takes in a df,
+    returns a nested dict called holder, as the data object
+    """
+    tasks = tasks.upper().split(",")
+    for task in tasks:
+        assert task in ["ALL", "TP", "LM_PROBA", "LM_PERPLEXITY", "TM"]
+    assert no_duplicate_index(df)
+    holder = get_value_holder(df)
+
+    try:
+        if "ALL" in tasks or "TP" in tasks:
+            holder = encode_text_properties(
+                df, holder, tp_model, disable_tqdm=disable_tqdm
+            )
+        if "ALL" in tasks or task == "LM_PERPLEXITY" in tasks:
+            holder = encode_lm_perplexity(
+                df, holder, lm_perplexity_model, disable_tqdm=disable_tqdm
+            )
+        if "ALL" in tasks or "LM_PROBA" in tasks:
+            holder = encode_lm_proba(
+                df, holder, lm_proba_model, disable_tqdm=disable_tqdm
+            )
+        if "ALL" in tasks or "TM" in tasks:
+            holder = encode_tm_properties(
+                df, holder, tm_model, tm_model_name_or_path, disable_tqdm=disable_tqdm
+            )
+    except KeyboardInterrupt as ki:
+        print("Keyboard interrupt, saving partial results")
+        print(ki)
+
+    print("=" * 40)
+    print("--- all done")
+
+    loop_num = 4  # 4 extactor pipes
+    keys_to_rm = []
+    for h in holder.keys():
+        if holder[h]["num_successful_loop"] == loop_num:
+            pass
+        else:
+            keys_to_rm.append(h)
+    _failed_extraction_count = 0
+    for _failed_extraction_count, k in enumerate(keys_to_rm):
+        del holder[k]
+
+    print("total failed extraction: ", _failed_extraction_count, "out of", len(holder))
+    print("a sample holder value for sanity check")
+    print()
+    print()
+    sample_holder_item_key = list(holder.keys())[0]
+    show_sample_instance(holder, sample_holder_item_key)
+    print()
+
+    print("=" * 40)
+
+    return holder
+
+
+def encode_only_tp_model_properties(
+    df,
+    tp_model,
+    disable_tqdm=False,
 ):
     """
     Takes in a df,
@@ -309,13 +372,6 @@ def encode_all_properties(
     holder = get_value_holder(df)
 
     holder = encode_text_properties(df, holder, tp_model, disable_tqdm=disable_tqdm)
-    holder = encode_lm_perplexity(
-        df, holder, lm_perplexity_model, disable_tqdm=disable_tqdm
-    )
-    holder = encode_lm_proba(df, holder, lm_proba_model, disable_tqdm=disable_tqdm)
-    holder = encode_tm_properties(
-        df, holder, tm_model, tm_model_name_or_path, disable_tqdm=disable_tqdm
-    )
     loop_num = 4  # 4 extactor pipes
 
     print("=" * 40)
