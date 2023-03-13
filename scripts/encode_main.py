@@ -105,6 +105,18 @@ if __name__ == "__main__":
         default=False,
         help="If True silent tqdm progress bar.",
     )
+    parser.add_argument(
+        "--prefix_file_name",
+        type=str,
+        default="",
+        help="Prefix for resulting file name.",
+    )
+    parser.add_argument(
+        "--tasks",
+        type=str,
+        default="ALL",
+        help="Tasks to perform in string format (e.g 'TP,LM_PROBA,LM_PERPLEXITY,TM').",
+    )
 
     # get args, sanity check
     args = parser.parse_args()
@@ -180,13 +192,18 @@ if __name__ == "__main__":
         tm_model=args.target_model,
         tm_model_name_or_path=args.target_model_name_or_path,
         disable_tqdm=args.disable_tqdm,
+        tasks=args.tasks,
+    )
+    file_name = (
+        "_".join(
+            [args.target_model, args.target_model_dataset, args.attack_name, args.tasks]
+        )
+        + ".joblib"
     )
 
     print("--- saving to disk")
-    file_name = (
-        "_".join([args.target_model, args.target_model_dataset, args.attack_name])
-        + ".joblib"
-    )
+    if args.prefix_file_name:
+        file_name = args.prefix_file_name + "_" + file_name
     if args.test:
         file_name = "test_" + file_name
     file_path = Path("data_tcab/reprs/samplewise", file_name)
