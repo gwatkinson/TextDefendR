@@ -13,8 +13,10 @@
     - [2.2.2. Run some attacks with TextAttack (optional)](#222-run-some-attacks-with-textattack-optional)
     - [2.2.3. Run attacks for TCAB dataset](#223-run-attacks-for-tcab-dataset)
   - [2.3. TCAB Benchmark](#23-tcab-benchmark)
-    - [2.3.1. Generate the whole dataset](#231-generate-the-whole-dataset)
+    - [2.3.1. Generate the whole dataset for detection model](#231-generate-the-whole-dataset-for-detection-model)
     - [2.3.2. Encode the dataset with feature extraction](#232-encode-the-dataset-with-feature-extraction)
+    - [2.3.3. Split data by model and trained dataset](#233-split-data-by-model-and-trained-dataset)
+    - [2.3.4. Distribute data for detection experiments](#234-distribute-data-for-detection-experiments)
 
 
 ## 1. Installation
@@ -153,7 +155,7 @@ options:
 
 :globe_with_meridians: Reference: https://github.com/react-nlp/tcab_benchmark
 
-#### 2.3.1. Generate the whole dataset
+#### 2.3.1. Generate the whole dataset for detection model
 
 Run
 ```{bash}
@@ -217,3 +219,31 @@ options:
 :bulb: Notebook step-by-step for encode_samplewise_features: [encode_samplewise_features.ipynb](/notebooks/encode_samplewise_features.ipynb)
 
 :bulb: Notebook for feature extraction: [feature_extraction.ipynb](/notebooks/feature_extraction.ipynb)
+
+#### 2.3.3. Split data by model and trained dataset
+
+```{bash}
+python scripts/make_official_dataset_splits.py
+```
+
+#### 2.3.4. Distribute data for detection experiments
+
+Create `train.csv`, `val.csv` and `test.csv` under `data_tcab/detection-experiments/` directory.
+```{bash}
+python scripts/distribute_experiments.py
+```
+:memo: Usage
+```
+usage: distribute_experiments.py [-h] [--target_model_dataset TARGET_MODEL_DATASET]
+                                 [--target_model TARGET_MODEL]
+                                 [--experiment_setting {clean_vs_all,multiclass_with_clean}]
+
+options:
+  -h, --help            show this help message and exit
+  --target_model_dataset TARGET_MODEL_DATASET
+                        Dataset attacked. (default: allocine)
+  --target_model TARGET_MODEL
+                        Target model type. (default: distilcamembert)
+  --experiment_setting {clean_vs_all,multiclass_with_clean}
+                        Binary or multiclass detection. (default: clean_vs_all)
+```
