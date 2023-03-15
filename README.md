@@ -5,14 +5,16 @@
 
 - [1. Installation](#1-installation)
 - [2. Usage](#2-usage)
-  - [2.1. TCAB Dataset Generation](#21-tcab-dataset-generation)
-    - [2.1.1. Download the Allociné dataset](#211-download-the-allociné-dataset)
-    - [2.1.2. Fine-tune the model (optional)](#212-fine-tune-the-model-optional)
-    - [2.1.3. Test `textattack` (optional)](#213-test-textattack-optional)
-    - [2.1.4. Generate the TCAB dataset](#214-generate-the-tcab-dataset)
-  - [2.2. TCAB Benchmark](#22-tcab-benchmark)
-    - [2.2.1. Generate the whole dataset](#221-generate-the-whole-dataset)
-    - [2.2.2. Encode the dataset with feature extraction](#222-encode-the-dataset-with-feature-extraction)
+  - [2.1. DistilCamemBERT fine-tuning on Allociné](#21-distilcamembert-fine-tuning-on-allociné)
+    - [2.1.1. Model fine-tuning (optional)](#211-model-fine-tuning-optional)
+    - [2.1.2. Model evaluation](#212-model-evaluation)
+  - [2.2. TCAB Dataset Generation](#22-tcab-dataset-generation)
+    - [2.2.1. Download the Allociné dataset](#221-download-the-allociné-dataset)
+    - [2.2.2. Run some attacks with TextAttack (optional)](#222-run-some-attacks-with-textattack-optional)
+    - [2.2.3. Run attacks for TCAB dataset](#223-run-attacks-for-tcab-dataset)
+  - [2.3. TCAB Benchmark](#23-tcab-benchmark)
+    - [2.3.1. Generate the whole dataset](#231-generate-the-whole-dataset)
+    - [2.3.2. Encode the dataset with feature extraction](#232-encode-the-dataset-with-feature-extraction)
 
 
 ## 1. Installation
@@ -44,14 +46,38 @@ poe torch_cuda
 
 ## 2. Usage
 
-### 2.1. TCAB Dataset Generation
+### 2.1. DistilCamemBERT fine-tuning on Allociné
+
+#### 2.1.1. Model fine-tuning (optional)
+
+
+
+- Fine-tune with TextAttack:
+```{bash}
+textattack train --model cmarkea/distilcamembert-base --dataset allocine --num-epochs 3 --learning_rate 5e-5 --num_warmum_steps 500 --weight_decay 0.01 --per-device-train-batch-size 16 --gradient_accumulation_steps 4 --load_best_model_at_end true --log-to-tb
+```
+- Fine-tune with Transformers: [model_finetuning.ipynb](notebooks/model_finetuning.ipynb)
+
+The fine-tuned model is available on HuggingFace: https://huggingface.co/baptiste-pasquier/distilcamembert-allocine
+
+#### 2.1.2. Model evaluation
+- Evaluate the fine-tuned model with TextAttack:
+```{bash}
+textattack eval --model-from-huggingface baptiste-pasquier/distilcamembert-allocine --dataset-from-huggingface allocine --num-examples 1000 --dataset-split test
+```
+- Evaluate with Transformers: [model_evaluation.ipynb](notebooks/model_evaluation.ipynb)
+
+The model offers an accuracy score of 97%.
+
+
+### 2.2. TCAB Dataset Generation
 
 This section provides
 a database of attacks with a fine-tuned DistilCamemBERT model on the task of Allociné reviews classification.
 
 :globe_with_meridians: Reference: https://github.com/react-nlp/tcab_generation
 
-#### 2.1.1. Download the Allociné dataset
+#### 2.2.1. Download the Allociné dataset
 
 Run
 ```{bash}
@@ -59,29 +85,14 @@ python scripts/download_data.py
 ```
 This generates a `train.csv`, `val.csv`, and `test.csv`.
 
-#### 2.1.2. Fine-tune the model (optional)
-
-Run
-```{bash}
-textattack train --model cmarkea/distilcamembert-base --dataset allocine --num-epochs 3 --learning-rate 5e-5 --per-device-train-batch-size 64 --log-to-tb
-```
-The fine-tuned model is available on HuggingFace: https://huggingface.co/baptiste-pasquier/distilcamembert-allocine
-
-
-Evaluate the fine-tuned model:
-```{bash}
-textattack eval --model-from-huggingface baptiste-pasquier/distilcamembert-allocine --dataset-from-huggingface allocine --num-examples 1000 --dataset-split test
-```
-The model offers an accuracy score of 97%.
-
-#### 2.1.3. Test `textattack` (optional)
+#### 2.2.2. Run some attacks with TextAttack (optional)
 
 Run
 ```{bash}
 textattack attack --model-from-huggingface baptiste-pasquier/distilcamembert-allocine --dataset-from-huggingface allocine --recipe deepwordbug --num-examples 50
 ```
 
-#### 2.1.4. Generate the TCAB dataset
+#### 2.2.3. Run attacks for TCAB dataset
 
 Run
 ```{bash}
@@ -138,18 +149,18 @@ options:
 :bulb: Notebook attack statistics: [attack_statistics.ipynb](/notebooks/attack_statistics.ipynb)
 
 
-### 2.2. TCAB Benchmark
+### 2.3. TCAB Benchmark
 
 :globe_with_meridians: Reference: https://github.com/react-nlp/tcab_benchmark
 
-#### 2.2.1. Generate the whole dataset
+#### 2.3.1. Generate the whole dataset
 
 Run
 ```{bash}
 python scripts/generate_catted_dataset.py
 ```
 
-#### 2.2.2. Encode the dataset with feature extraction
+#### 2.3.2. Encode the dataset with feature extraction
 
 - TP: text properties
 - TM: target model properties
