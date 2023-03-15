@@ -34,12 +34,11 @@ SUPPORTED_ATTACKS = {
 }
 PRIMARY_KEY_FIELDS = sorted(
     [
-        "scenario",
-        "target_model_dataset",
-        "target_model",
-        "attack_toolchain",
         "attack_name",
+        "attack_toolchain",
+        "scenario",
+        "target_model",
+        "target_model_dataset",
         "test_index",
-        "original_text_identifier",
     ]
 )

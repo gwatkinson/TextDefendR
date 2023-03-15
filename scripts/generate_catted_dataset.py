@@ -60,9 +60,6 @@ if __name__ == "__main__":
     assert "test_ndx" not in whole_catted_dataset.keys()
     assert "dataset" not in whole_catted_dataset.keys()
     whole_catted_dataset["test_ndx"] = whole_catted_dataset["test_index"]
-    whole_catted_dataset["original_text_identifier"] = whole_catted_dataset[
-        "test_index"
-    ]
     whole_catted_dataset["dataset"] = whole_catted_dataset["target_model_dataset"]
     whole_catted_dataset = refresh_index(whole_catted_dataset)
     whole_catted_dataset = all_cols_nan_to_strnone(whole_catted_dataset)
