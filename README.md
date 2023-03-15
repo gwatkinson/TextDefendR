@@ -17,6 +17,7 @@
     - [2.3.2. Encode the dataset with feature extraction](#232-encode-the-dataset-with-feature-extraction)
     - [2.3.3. Split data by model and trained dataset](#233-split-data-by-model-and-trained-dataset)
     - [2.3.4. Distribute data for detection experiments](#234-distribute-data-for-detection-experiments)
+    - [2.3.5. Merge experiment data with feature extraction](#235-merge-experiment-data-with-feature-extraction)
 
 
 ## 1. Installation
@@ -246,4 +247,22 @@ options:
                         Target model type. (default: distilcamembert)
   --experiment_setting {clean_vs_all,multiclass_with_clean}
                         Binary or multiclass detection. (default: clean_vs_all)
+```
+
+#### 2.3.5. Merge experiment data with feature extraction
+
+Take an experiment directory that contains train and test csv files and make them into joblib files using cached features in `data_tcab/reprs/` directory.
+```{bash}
+python scripts/make_experiment.py
+```
+:memo: Usage
+```
+usage: make_experiment.py [-h] [--experiment_dir EXPERIMENT_DIR]
+
+options:
+  -h, --help            show this help message and exit
+  --experiment_dir EXPERIMENT_DIR
+                        Directory of the distributed experiment to be made. (default:
+                        data_tcab/detection-
+                        experiments/allocine/distilcamembert/clean_vs_all/)
 ```

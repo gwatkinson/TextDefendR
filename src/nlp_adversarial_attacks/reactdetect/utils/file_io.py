@@ -1,5 +1,15 @@
 import json
 import os
+from pathlib import Path
+
+
+def grab_joblibs(root_dir):
+    """
+    grab all joblibs in a root dir
+    """
+    root_dir = Path(root_dir)
+    files = list(root_dir.glob("**/*.joblib"))
+    return files
 
 
 def mkfile_if_dne(fpath):
@@ -22,6 +32,12 @@ def vim_write_zz(fpath, string):
     mkfile_if_dne(fpath)
     with open(fpath, "w") as ofp:
         ofp.write(string + "\n")
+
+
+def load_json(fpath):
+    with open(fpath) as f:
+        data = json.load(f)
+    return data
 
 
 def dump_json(data, fpath):
