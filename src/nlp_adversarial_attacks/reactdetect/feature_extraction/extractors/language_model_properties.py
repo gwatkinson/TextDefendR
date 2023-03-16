@@ -32,7 +32,7 @@ def lm_proba_and_rank(
     if regions is None:
         regions = [(0.0, 0.25), (0.25, 0.75), (0.75, 1.0), (0.0, 1.0)]
 
-    if type(feature_list) == list:
+    if feature_list is not None:
         for i in range(len(regions)):
             feature_list.append(f"lm_proba_mean_region{i}")
             feature_list.append(f"lm_proba_var_region{i}")
@@ -143,7 +143,7 @@ def lm_perplexity(
     """
     if regions is None:
         regions = [(0.0, 0.25), (0.25, 0.75), (0.75, 1.0), (0.0, 1.0)]
-    if type(feature_list) == list:
+    if feature_list is not None:
         feature_list += [f"lm_perplexity_region{i}" for i in range(len(regions))]
 
     start = time.time()

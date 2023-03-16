@@ -13,6 +13,20 @@ SUPPORTED_TARGET_MODEL_DATASETS = {
     "reddit_dataset",
     "allocine",
 }
+NUM_LABELS_LOOKUP = {
+    "fnc1": 4,
+    "civil_comments": 2,
+    "hatebase": 2,
+    "wikipedia": 2,
+    "sst": 2,
+    "imdb": 2,
+    "climate-change_waterloo": 3,
+    "nuclear_energy": 3,
+    "gab_dataset": 2,
+    "reddit_dataset": 2,
+    "wikipedia_personal": 2,
+    "allocine": 2,
+}
 SUPPORTED_ATTACKS = {
     "bae",
     "bert",

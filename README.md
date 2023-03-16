@@ -165,9 +165,12 @@ python scripts/generate_catted_dataset.py
 
 #### 2.3.2. Encode the dataset with feature extraction
 
+Extract complex features for the detection model :
 - TP: text properties
 - TM: target model properties
 - LM: language model properties
+
+The result is stored ase a `.joblib` file under `data_tcab/reprs/` directory.
 
 Run
 ```{bash}
@@ -182,8 +185,9 @@ usage: encode_main.py [-h] [--target_model TARGET_MODEL]
                       [--max_clean_instance MAX_CLEAN_INSTANCE] [--tp_model TP_MODEL]  
                       [--lm_perplexity_model LM_PERPLEXITY_MODEL]
                       [--lm_proba_model LM_PROBA_MODEL]
-                      [--target_model_name_or_path TARGET_MODEL_NAME_OR_PATH]
-                      [--test TEST] [--disable_tqdm DISABLE_TQDM]
+                      [--target_model_name_or_path TARGET_MODEL_NAME_OR_PATH] [--test]  
+                      [--disable_tqdm] [--prefix_file_name PREFIX_FILE_NAME]
+                      [--tasks TASKS]
 
 options:
   -h, --help            show this help message and exit
@@ -210,10 +214,32 @@ options:
                         Fine-tuned target model to load from cache or download
                         (HuggingFace). (default: baptiste-pasquier/distilcamembert-  
                         allocine)
-  --test TEST           If True only computes first 10 instance. (default: False)  
-  --disable_tqdm DISABLE_TQDM
-                        If True silent tqdm progress bar. (default: False)
+  --test                Only computes first 10 instance. (default: False)
+  --disable_tqdm        Silent tqdm progress bar. (default: False)
+  --prefix_file_name PREFIX_FILE_NAME
+                        Prefix for resulting file name. (default: )
+  --tasks TASKS         Tasks to perform in string format (e.g.
+                        'TP,LM_PROBA,LM_PERPLEXITY,TM'). (default: ALL)
 ```
+
+For instance, to use the `DistilCamemBERT` model trained on the `Allociné` dataset as the target model, a version of `DistilCamemBERT` for the TP and LM probabilities, and a French implementation of `GPT2` for the perplexity, run:
+```{bash}
+python scripts/encode_main.py \
+    --tp_model cmarkea/distilcamembert-base-nli \
+    --lm_perplexity_model asi/gpt-fr-cased-small \
+    --lm_proba_model cmarkea/distilcamembert-base \
+    --prefix_file_name fr+small \
+```
+This will create the file `data_tcab/reprs/samplewise/fr+small_distilcamembert_allocine_ALL_ALL.joblib`. This command is quite long, around 7 hours for the `Allociné` dataset.
+
+To generate only the TP features with another model, run :
+```{bash}
+python scripts/encode_main.py \
+    --tp_model google/canine-c \
+    --prefix_file_name fr+canine \
+    --tasks TP
+```
+This will create the file `data_tcab/reprs/samplewise/fr+canine_distilcamembert_allocine_ALL_TP.joblib`. This is quite fast compared to the previous command (around 5 minutes).
 
 :bulb: Notebook step-by-step: [run_encode_main.ipynb](/notebooks/run_encode_main.ipynb)
 

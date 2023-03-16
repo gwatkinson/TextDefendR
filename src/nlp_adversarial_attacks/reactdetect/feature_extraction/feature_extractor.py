@@ -119,7 +119,6 @@ class FeatureExtractor:
         clean_extremes=True,
         output_text_list=None,
         save_extracted=False,
-        unused_model_to_cpu=False,
         **kwargs,
     ):
         """Calls each of the extractor functions, passing the appropriate
@@ -162,47 +161,6 @@ class FeatureExtractor:
         for fcn in self.extractors:
             try:
                 # ============= start setup for this extractor function =============
-
-                if unused_model_to_cpu:
-                    # move causal lm model to or from device
-                    if fcn.__name__ == "lm_perplexity":
-                        kwargs["lm_causal_model"] = kwargs["lm_causal_model"].to(
-                            kwargs["device"]
-                        )
-                    elif "lm_causal_model" in kwargs:
-                        kwargs["lm_causal_model"] = kwargs["lm_causal_model"].cpu()
-
-                    # move masked lm model to or from device
-                    if fcn.__name__ == "lm_proba_and_rank":
-                        kwargs["lm_masked_model"] = kwargs["lm_masked_model"].to(
-                            kwargs["device"]
-                        )
-                    elif "lm_masked_model" in kwargs:
-                        kwargs["lm_masked_model"] = kwargs["lm_masked_model"].cpu()
-
-                    # move masked lm model to or from device
-                    if fcn.__name__ == "lm_bert":
-                        kwargs["lm_bert_model"] = kwargs["lm_bert_model"].to(
-                            kwargs["device"]
-                        )
-                    elif "lm_bert_model" in kwargs:
-                        kwargs["lm_bert_model"] = kwargs["lm_bert_model"].cpu()
-
-                    # move masked lm model to or from device
-                    if fcn.__name__ == "tp_bert":
-                        kwargs["lm_bert_model"] = kwargs["lm_bert_model"].to(
-                            kwargs["device"]
-                        )
-                    elif "lm_bert_model" in kwargs:
-                        kwargs["lm_bert_model"] = kwargs["lm_bert_model"].cpu()
-
-                    # move target model to or from device
-                    if fcn in EXTR_FCNS_BY_TAG["tm"]:
-                        kwargs["target_model"] = kwargs["target_model"].to(
-                            kwargs["device"]
-                        )
-                    elif "target_model" in kwargs:
-                        kwargs["target_model"] = kwargs["target_model"].cpu()
 
                 # get all parameters for this function
                 fcn_params = [

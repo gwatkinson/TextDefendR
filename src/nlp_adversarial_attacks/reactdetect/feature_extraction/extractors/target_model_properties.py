@@ -45,7 +45,7 @@ def tm_posterior(
     all_preds = np.vstack(all_preds)
     y_proba = softmax(all_preds, axis=1)
 
-    if type(feature_list) == list:
+    if feature_list is not None:
         for i in range(y_proba.shape[1]):
             feature_list.append(f"tm_output_{i}")
 
@@ -110,7 +110,7 @@ def tm_gradient(
                     feature_vec.append(torch.mean(gradient).item())
                     feature_vec.append(torch.var(gradient).item())
                     # add feature names
-                    if i == 0 and type(feature_list) == list:
+                    if i == 0 and feature_list is not None:
                         feature_list.append(f"tm_gradient_mean_layer{j}_region_{k}")
                         feature_list.append(f"tm_gradient_var_layer{j}_region_{k}")
                 # compute quantiles of bigger layers
@@ -126,7 +126,7 @@ def tm_gradient(
                     except RuntimeError:
                         no_error = False
                     # add feature names
-                    if i == 0 and type(feature_list) == list:
+                    if i == 0 and feature_list is not None:
                         feature_list.append(f"tm_gradient_mean_layer{j}_region{k}")
                         feature_list.append(f"tm_gradient_var_layer{j}_region{k}")
                         if no_error:
@@ -218,7 +218,7 @@ def tm_activation(
                     feature_vec.append(np.var(activation))
 
                     # add feature names
-                    if i == 0 and type(feature_list) == list:
+                    if i == 0 and feature_list is not None:
                         feature_list.append(f"tm_activation_mean_layer{k}_region{j}")
                         feature_list.append(f"tm_activation_var_layer{k}")
 
@@ -230,7 +230,7 @@ def tm_activation(
                     feature_vec += list(np.quantile(activation, quantiles))
 
                     # add feature names
-                    if i == 0 and type(feature_list) == list:
+                    if i == 0 and feature_list is not None:
                         feature_list.append(f"tm_activation_mean_layer{k}_region{j}")
                         feature_list.append(f"tm_activation_var_layer{k}_region{j}")
                         feature_list += [
@@ -307,7 +307,7 @@ def tm_saliency(
         feature_vec += list(torch.quantile(saliency, quantiles).cpu().tolist())
 
         # add feature names
-        if i == 0 and type(feature_list) == list:
+        if i == 0 and feature_list is not None:
             feature_list.append(f"tm_{saliency_type}_saliency_mean")
             feature_list.append(f"tm_{saliency_type}_saliency_var")
             feature_list += [

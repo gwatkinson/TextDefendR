@@ -95,15 +95,13 @@ if __name__ == "__main__":
     # other might be useful cmds
     parser.add_argument(
         "--test",
-        type=bool,
-        default=False,
-        help="If True only computes first 10 instance.",
+        action="store_true",
+        help="Only computes first 10 instance.",
     )
     parser.add_argument(
         "--disable_tqdm",
-        type=bool,
-        default=False,
-        help="If True silent tqdm progress bar.",
+        action="store_true",
+        help="Silent tqdm progress bar.",
     )
     parser.add_argument(
         "--prefix_file_name",
@@ -115,7 +113,7 @@ if __name__ == "__main__":
         "--tasks",
         type=str,
         default="ALL",
-        help="Tasks to perform in string format (e.g 'TP,LM_PROBA,LM_PERPLEXITY,TM').",
+        help="Tasks to perform in string format (e.g. 'TP,LM_PROBA,LM_PERPLEXITY,TM').",
     )
 
     # get args, sanity check

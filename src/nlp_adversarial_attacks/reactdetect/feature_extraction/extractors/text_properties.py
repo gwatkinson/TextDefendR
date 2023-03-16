@@ -20,7 +20,7 @@ def tp_num_chars(text_list, feature_list=None):
     Returns: 2D Numpy.Array of shape=(no. samples, 1);
              character counts.
     """
-    if type(feature_list) == list:
+    if feature_list is not None:
         feature_list.append("num_chars")
 
     assert type(text_list) == pd.Series
@@ -34,7 +34,7 @@ def tp_num_alpha_chars(text_list, feature_list=None):
     Returns: 2D Numpy.Array of shape=(no. samples, 1);
              no. alpha characters.
     """
-    if type(feature_list) == list:
+    if feature_list is not None:
         feature_list.append("num_alpha_chars")
 
     assert type(text_list) == pd.Series
@@ -48,7 +48,7 @@ def tp_num_digits(text_list, feature_list=None):
     Returns: 2D Numpy.Array of shape=(no. samples, 1);
              no. digits.
     """
-    if type(feature_list) == list:
+    if feature_list is not None:
         feature_list.append("num_digits")
 
     assert type(text_list) == pd.Series
@@ -62,7 +62,7 @@ def tp_num_punctuation(text_list, feature_list=None):
     Returns: 2D Numpy.Array of shape=(no. samples, 1);
              no. punctuation marks.
     """
-    if type(feature_list) == list:
+    if feature_list is not None:
         feature_list.append("num_punctuation")
 
     assert type(text_list) == pd.Series
@@ -82,7 +82,7 @@ def tp_num_multi_spaces(text_list, feature_list=None):
     Returns: 2D Numpy.Array of shape=(no. samples, 1);
              no. punctuation marks.
     """
-    if type(feature_list) == list:
+    if feature_list is not None:
         feature_list.append("num_multi_spaces")
 
     assert type(text_list) == pd.Series
@@ -112,7 +112,7 @@ def tp_num_words(text_list, feature_list=None):
     Returns: 2D Numpy.Array of shape=(no. samples, 1);
              word counts.
     """
-    if type(feature_list) == list:
+    if feature_list is not None:
         feature_list.append("num_words")
 
     assert type(text_list) == pd.Series
@@ -137,7 +137,7 @@ def tp_avg_word_length(
     if regions is None:
         regions = [(0.0, 0.25), (0.25, 0.75), (0.75, 1.0), (0.0, 1.0)]
 
-    if type(feature_list) == list:
+    if feature_list is not None:
         for i in range(len(regions)):
             feature_list.append(f"avg_word_length_mean_region{i}")
             feature_list.append(f"avg_word_length_var_region{i}")
@@ -185,7 +185,7 @@ def tp_num_non_ascii(text_list, feature_list=None):
     Returns: 2D Numpy.Array of shape=(no. samples, 1);
              non-ascii char. counts.
     """
-    if type(feature_list) == list:
+    if feature_list is not None:
         feature_list.append("num_non_ascii")
 
     assert type(text_list) == pd.Series
@@ -207,7 +207,7 @@ def tp_num_cased_letters(text_list, feature_list=None):
              fracion of uppercase letters,
              fraction of lowercase letters.
     """
-    if type(feature_list) == list:
+    if feature_list is not None:
         feature_list += [
             "num_uppercase_letters",
             "num_lowercase_letters",
@@ -254,7 +254,7 @@ def tp_is_first_word_lowercase(text_list, feature_list=None):
     Returns: 2D Numpy.Array of shape=(no. samples, 1);
              1 if lowercase first letter in for the first word.
     """
-    if type(feature_list) == list:
+    if feature_list is not None:
         feature_list.append("is_first_word_lowercase")
 
     assert type(text_list) == pd.Series
@@ -276,7 +276,7 @@ def tp_num_mixed_case_words(text_list, feature_list=None):
     Returns: 2D Numpy.Array of shape=(no. samples, 1);
              no. words with upper and lowercase letters.
     """
-    if type(feature_list) == list:
+    if feature_list is not None:
         feature_list.append("num_mixed_case_words")
 
     assert type(text_list) == pd.Series
@@ -309,7 +309,7 @@ def tp_num_single_lowercase_letters(text_list, feature_list=None):
     Returns: 2D Numpy.Array of shape=(no. samples, 1);
              no. single lowercase letters that are not 'a' or 'i'.
     """
-    if type(feature_list) == list:
+    if feature_list is not None:
         feature_list.append("num_single_lowercase_letters")
 
     assert type(text_list) == pd.Series
@@ -330,7 +330,7 @@ def tp_num_lowercase_after_punctuation(text_list, feature_list=None):
     Returns: 2D Numpy.Array of shape=(no. samples, 1);
              counts of lowercase letters after a punctuation char.
     """
-    if type(feature_list) == list:
+    if isinstance(feature_list, list):
         feature_list.append("num_lowercase_letters_after_punctuation")
 
     assert type(text_list) == pd.Series
@@ -364,7 +364,7 @@ def tp_num_cased_word_switches(text_list, feature_list=None):
              no. times words switch from being all uppercase
                to all lowercase or vice versa.
     """
-    if type(feature_list) == list:
+    if feature_list is not None:
         feature_list.append("num_cased_word_switches")
 
     assert type(text_list) == pd.Series
@@ -417,6 +417,10 @@ def tp_bert(
     Reference: https://github.com/zhouhanxie/react-detection/blob/main/lineardetect-bert.py, or
         https://huggingface.co/sentence-transformers/bert-base-nli-mean-tokens
     """
+    if feature_list is not None:
+        for i in range(768):
+            feature_list.append(f"lm_bert_{i}")
+
     # prepare data
     data = text_list.tolist()
     dataloader = DataLoader(
@@ -462,9 +466,5 @@ def tp_bert(
     outputs = np.vstack(outputs)
 
     assert outputs.shape[1] == 768
-
-    if type(feature_list) == list:
-        for i in range(768):
-            feature_list.append(f"lm_bert_{i}")
 
     return outputs

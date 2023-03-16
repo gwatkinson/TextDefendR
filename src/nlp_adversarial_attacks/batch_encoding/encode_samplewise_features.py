@@ -16,6 +16,7 @@ from nlp_adversarial_attacks.reactdetect.utils.hashing import (
     get_pk_tuple,
     hash_pk_tuple,
 )
+from nlp_adversarial_attacks.reactdetect.utils.magic_vars import NUM_LABELS_LOOKUP
 from nlp_adversarial_attacks.reactdetect.utils.pandas_ops import no_duplicate_index
 
 assert (
@@ -219,28 +220,16 @@ def encode_tm_properties(
     # ------------ LOAD TM, DETERMINE NUM_LABELS AUTO ------------ #
     print("preparing tm properties encoding")
     assert no_duplicate_index(df)
-    assert "target_model_dataset" in df.columns
-    assert "target_model" in df.columns
 
+    assert "target_model_dataset" in df.columns
     assert df["target_model_dataset"].nunique() == 1
     target_model_dataset = df["target_model_dataset"][0]
 
-    num_labels_lookup = {
-        "fnc1": 4,
-        "civil_comments": 2,
-        "hatebase": 2,
-        "wikipedia": 2,
-        "sst": 2,
-        "imdb": 2,
-        "climate-change_waterloo": 3,
-        "nuclear_energy": 3,
-        "gab_dataset": 2,
-        "reddit_dataset": 2,
-        "wikipedia_personal": 2,
-        "allocine": 2,
-    }
+    assert "target_model" in df.columns
+    assert df["target_model"].nunique() == 1
+
     # lookup how many labels are there
-    num_labels = num_labels_lookup[target_model_dataset]
+    num_labels = NUM_LABELS_LOOKUP[target_model_dataset]
 
     print("--- loading target model")
     print(
