@@ -4,6 +4,7 @@ from pathlib import Path
 import joblib
 import numpy
 from sklearn.base import BaseEstimator
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
     balanced_accuracy_score,
@@ -71,33 +72,29 @@ class ExperimentModel:
             "intercept",
         ]:
             self.metrics[key] = None
+
         self.metrics["feature_names"] = list(
             self.feature_names
         )  # make sure these are lists since numpy ND arrays are not JSON serializable
+        self.metrics["label_classes"] = list(self.label_encoder.classes_)
+
         if isinstance(self.classifier, GridSearchCV):
             self.metrics["best_params"] = self.classifier.best_params_
-            if isinstance(self.classifier.best_estimator_, Pipeline):
-                self.metrics["coef"] = self.classifier.best_estimator_[
-                    -1
-                ].coef_.tolist()
-                self.metrics["intercept"] = self.classifier.best_estimator_[
-                    -1
-                ].intercept_.tolist()
-            else:
-                self.metrics["coef"] = self.classifier.best_estimator_.coef_.tolist()
-                self.metrics[
-                    "intercept"
-                ] = self.classifier.best_estimator_.intercept_.tolist()
+            classifier = self.classifier.best_estimator_
         else:
-            self.metrics["coef"] = self.classifier.coef_.tolist()
-            self.metrics["intercept"] = self.classifier.intercept_.tolist()
-        self.metrics["label_classes"] = list(self.label_encoder.classes_)
-        feature_names = self.metrics["feature_names"]
-        self.metrics["important_features"] = self.extract_important_features(
-            coefs=numpy.array(self.metrics["coef"]), feature_names=feature_names
-        )
+            classifier = self.classifier
 
-    def extract_important_features(self, coefs, feature_names, k=10) -> dict:
+        if isinstance(classifier, Pipeline):
+            classifier = classifier[-1]
+
+        if isinstance(classifier, LogisticRegression):
+            self.metrics["coef"] = classifier.coef_.tolist()
+            self.metrics["intercept"] = classifier.intercept_.tolist()
+            self.metrics["important_features"] = self.extract_important_features(
+                coefs=numpy.array(self.metrics["coef"])
+            )
+
+    def extract_important_features(self, coefs, k=10) -> dict:
         """
         Extract the most important features of the model.
         Inputs:
@@ -119,7 +116,7 @@ class ExperimentModel:
             out[label_name] = []
             for ndx in best_coef_indices[:k]:
                 # print('{}: {:.3f}'.format(feature_names[ndx], coef[ndx]))
-                out[label_name].append((feature_names[ndx], coef[ndx]))
+                out[label_name].append((self.feature_names[ndx], coef[ndx]))
             # print('')
         # print(out)
         return out

@@ -239,6 +239,8 @@ def training_main(
             "decisiontreeclassifier__max_depth": [3, 5, None],
             "decisiontreeclassifier__min_samples_leaf": [1, 2, 4, 10],
         }
+    else:
+        raise ValueError(f"Unknown model type: {model_type}")
     pipeline = make_pipeline(ss, clf_temp)
     if not args.disable_tune:
         clf = GridSearchCV(
@@ -249,7 +251,7 @@ def training_main(
             n_jobs=args.cv_n_jobs,
         )
     else:
-        clf = clf_temp
+        clf = pipeline
 
     model = ExperimentModel(
         classifier=clf,
