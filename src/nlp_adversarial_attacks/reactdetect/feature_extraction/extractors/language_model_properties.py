@@ -17,6 +17,7 @@ def lm_proba_and_rank(
     quantiles=None,
     regions=None,
     feature_list=None,
+    get_feature_dim_names=False,
 ):
     """
     Input: Pandas.Series of strings;
@@ -44,6 +45,9 @@ def lm_proba_and_rank(
             feature_list += [
                 f"lm_rank_quant{j}_region{i}" for j in range(len(quantiles))
             ]
+
+    if get_feature_dim_names:
+        return
 
     start = time.time()
 
@@ -131,6 +135,7 @@ def lm_perplexity(
     stride=1,
     regions=None,
     feature_list=None,
+    get_feature_dim_names=False,
 ):
     """
     Input: Pandas.Series of strings;
@@ -145,6 +150,9 @@ def lm_perplexity(
         regions = [(0.0, 0.25), (0.25, 0.75), (0.75, 1.0), (0.0, 1.0)]
     if feature_list is not None:
         feature_list += [f"lm_perplexity_region{i}" for i in range(len(regions))]
+
+    if get_feature_dim_names:
+        return
 
     start = time.time()
 

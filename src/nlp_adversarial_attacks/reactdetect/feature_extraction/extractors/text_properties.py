@@ -402,6 +402,7 @@ def tp_bert(
     max_length=128,
     batch_size=50,
     feature_list=None,
+    get_feature_dim_names=False,
 ):
     """
     Input:
@@ -420,6 +421,9 @@ def tp_bert(
     if feature_list is not None:
         for i in range(768):
             feature_list.append(f"lm_bert_{i}")
+
+    if get_feature_dim_names:
+        return
 
     # prepare data
     data = text_list.tolist()
