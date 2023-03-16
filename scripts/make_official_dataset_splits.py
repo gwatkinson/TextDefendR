@@ -145,7 +145,7 @@ def get_splits_for_tm(tm, train_df, val_df, test_df):
     return train_df, val_df, test_df
 
 
-def create_splitted_whole_catted_dataset():
+def main():
     print("--- reading data")
     df = get_dataset_df("data_tcab/whole_catted_dataset.csv")
 
@@ -240,4 +240,4 @@ def create_splitted_whole_catted_dataset():
 
 
 if __name__ == "__main__":
-    create_splitted_whole_catted_dataset()
+    main()

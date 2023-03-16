@@ -157,6 +157,8 @@ options:
 
 :globe_with_meridians: Reference: https://github.com/react-nlp/tcab_benchmark
 
+:bulb: **You can run all this section in the following notebook:** [run_all_benchmark.ipynb](/notebooks/run_all_benchmark.ipynb)
+
 #### 2.3.1. Generate the whole dataset for detection model
 
 Run

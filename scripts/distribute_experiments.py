@@ -105,7 +105,31 @@ def filter_by_exp_setting(
         raise ValueError(f"invalid experiment_setting {experiment_setting}")
 
 
-def main(args):
+def main(raw_args=None):
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument(
+        "--target_model_dataset",
+        type=str,
+        default="allocine",
+        help="Dataset attacked.",
+    )
+    parser.add_argument(
+        "--target_model",
+        type=str,
+        default="distilcamembert",
+        help="Target model type.",
+    )
+    parser.add_argument(
+        "--experiment_setting",
+        type=str,
+        choices=["clean_vs_all", "multiclass_with_clean"],
+        default="clean_vs_all",
+        help="Binary or multiclass detection.",
+    )
+    args = parser.parse_args(raw_args)
+
     try:
         in_dir = Path(
             "data_tcab",
@@ -149,27 +173,4 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    parser.add_argument(
-        "--target_model_dataset",
-        type=str,
-        default="allocine",
-        help="Dataset attacked.",
-    )
-    parser.add_argument(
-        "--target_model",
-        type=str,
-        default="distilcamembert",
-        help="Target model type.",
-    )
-    parser.add_argument(
-        "--experiment_setting",
-        type=str,
-        choices=["clean_vs_all", "multiclass_with_clean"],
-        default="clean_vs_all",
-        help="Binary or multiclass detection.",
-    )
-    args = parser.parse_args()
-    main(args)
+    main()

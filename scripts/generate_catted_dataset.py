@@ -48,7 +48,7 @@ def address_clean_samples(df):
     return df
 
 
-if __name__ == "__main__":
+def main():
     print("--- loading all data")
     csvs = grab_csvs("attacks/")
     datas = []
@@ -76,9 +76,8 @@ if __name__ == "__main__":
     )
 
     print("dropping invalid attacks...")
-    VALID_ATTACKS = SUPPORTED_ATTACKS
     whole_catted_dataset = drop_for_column_outside_of_values(
-        whole_catted_dataset, "attack_name", VALID_ATTACKS
+        whole_catted_dataset, "attack_name", SUPPORTED_ATTACKS
     )
 
     whole_catted_dataset = refresh_index(whole_catted_dataset)
@@ -87,3 +86,7 @@ if __name__ == "__main__":
 
     print("-- saving to disk")
     whole_catted_dataset.to_csv("data_tcab/whole_catted_dataset.csv", index=False)
+
+
+if __name__ == "__main__":
+    main()

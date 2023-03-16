@@ -1,3 +1,4 @@
+import argparse
 from pathlib import Path
 
 import joblib
@@ -96,14 +97,38 @@ def df_to_instance_subset(df, known_samples):
     return out
 
 
-def main(args, out_dir):
+def main(raw_args=None):
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument(
+        "--experiment_dir",
+        type=str,
+        default="data_tcab/detection-experiments/allocine/distilcamembert/clean_vs_all/",
+        help="Directory of the distributed experiment to be made.",
+    )
+    main_args = parser.parse_args(raw_args)
+    out_dir = main_args.experiment_dir
+
+    assert Path(out_dir, "settings.json").exists(), (
+        "cannot find settings.json in " + out_dir
+    )
+    assert Path(out_dir, "train.csv").exists(), "cannot find train.csv in " + out_dir
+    assert Path(out_dir, "val.csv").exists(), "cannot find train.csv in " + out_dir
+    assert Path(out_dir, "test_release.csv").exists(), (
+        "cannot find test.csv in " + out_dir
+    )
+
+    exp_args = load_json(Path(out_dir, "settings.json"))
+    exp_args = argparse.Namespace(**exp_args)
+
     print("making exp into... ", out_dir)
 
     lazy_loading = True
     known_instances = load_known_instances(
         "data_tcab/reprs/samplewise",
-        target_model=args.target_model,
-        target_model_dataset=args.target_model_dataset,
+        target_model=exp_args.target_model,
+        target_model_dataset=exp_args.target_model_dataset,
         lazy_loading=lazy_loading,
     )
 
@@ -124,31 +149,4 @@ def main(args, out_dir):
 
 
 if __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    parser.add_argument(
-        "--experiment_dir",
-        type=str,
-        default="data_tcab/detection-experiments/allocine/distilcamembert/clean_vs_all/",
-        help="Directory of the distributed experiment to be made.",
-    )
-    args = parser.parse_args()
-
-    out_dir = args.experiment_dir
-
-    assert Path(out_dir, "settings.json").exists(), (
-        "cannot find settings.json in " + out_dir
-    )
-    assert Path(out_dir, "train.csv").exists(), "cannot find train.csv in " + out_dir
-    assert Path(out_dir, "val.csv").exists(), "cannot find train.csv in " + out_dir
-    assert Path(out_dir, "test_release.csv").exists(), (
-        "cannot find test.csv in " + out_dir
-    )
-
-    exp_args = load_json(Path(out_dir, "settings.json"))
-    exp_args = argparse.Namespace(**exp_args)
-
-    main(exp_args, out_dir)
+    main()

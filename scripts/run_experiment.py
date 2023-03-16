@@ -78,7 +78,7 @@ def get_feature_dim_names_by_feature_names(feature_names):
 
 
 def joblib_to_x_and_y(joblib_dir, feature_names):
-    print("--- loading from", joblib_dir, "mask to bin? ")
+    print("--- loading from", joblib_dir)
     valid_features = feature_names
     instance_dict = joblib.load(joblib_dir)
 
@@ -174,7 +174,7 @@ def training_main(
 
     assert set(y_train) == set(y_val), "inconsistant label classes in ytrain and yval"
 
-    print(f"\nno. train: {len(y_train)}")
+    print(f"\nno. train: {len(y_train):,}")
     print(f"no. val: {len(y_val):,}")
     print(f"no. test: {len(y_test):,}")
     print(f"no. features: {len(X_train[0]):,}\n")
@@ -273,7 +273,7 @@ def training_main(
     model.save()
 
 
-if __name__ == "__main__":
+def main(raw_args=None):
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
@@ -347,7 +347,7 @@ if __name__ == "__main__":
         action="store_true",
         help="Disable hyperparameters tuning with gridsearch.",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(raw_args)
 
     print("starting experiment:", args.experiment_dir)
 
@@ -366,3 +366,7 @@ if __name__ == "__main__":
         model_type=args.model,
         args=args,
     )
+
+
+if __name__ == "__main__":
+    main()

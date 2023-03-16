@@ -25,7 +25,7 @@ def holder_to_disk(holder, fname):
     joblib.dump(holder, fname)
 
 
-if __name__ == "__main__":
+def main(raw_args=None):
     start = time.time()
     # arg sanity checks
 
@@ -115,7 +115,7 @@ if __name__ == "__main__":
     )
 
     # get args, sanity check
-    args = parser.parse_args()
+    args = parser.parse_args(raw_args)
     assert args.target_model in SUPPORTED_TARGET_MODELS
     assert args.target_model_dataset in SUPPORTED_TARGET_MODEL_DATASETS
     assert args.target_model_train_dataset in SUPPORTED_TARGET_MODEL_DATASETS
@@ -128,48 +128,48 @@ if __name__ == "__main__":
 
     # io
     print("--- reading csv")
-    DF = pd.read_csv("data_tcab/whole_catted_dataset.csv")
+    df = pd.read_csv("data_tcab/whole_catted_dataset.csv")
     print()
     print("--- stats before filtering")
-    print(show_df_stats(DF))
+    print(show_df_stats(df))
 
     # compute
     print("--- filtering dataframe")
     if args.attack_name == "ALL":
         print("--- attack name is ALL, using all attacks")
-        DF = DF[
-            (DF["target_model_dataset"] == args.target_model_dataset)
-            & (DF["target_model_train_dataset"] == args.target_model_train_dataset)
-            & (DF["target_model"] == args.target_model)
+        df = df[
+            (df["target_model_dataset"] == args.target_model_dataset)
+            & (df["target_model_train_dataset"] == args.target_model_train_dataset)
+            & (df["target_model"] == args.target_model)
         ]
     elif args.attack_name == "ALLBUTCLEAN":
         print("--- attack name is ALLBUTCLEAN, using all attacks but clean")
-        DF = DF[
-            (DF["target_model_dataset"] == args.target_model_dataset)
-            & (DF["target_model_train_dataset"] == args.target_model_train_dataset)
-            & (DF["target_model"] == args.target_model)
-            & (DF["attack_name"] != "clean")
+        df = df[
+            (df["target_model_dataset"] == args.target_model_dataset)
+            & (df["target_model_train_dataset"] == args.target_model_train_dataset)
+            & (df["target_model"] == args.target_model)
+            & (df["attack_name"] != "clean")
         ]
     else:
-        DF = DF[
-            (DF["target_model_dataset"] == args.target_model_dataset)
-            & (DF["target_model_dataset"] == args.target_model_dataset)
-            & (DF["target_model"] == args.target_model)
-            & (DF["attack_name"] == args.attack_name)
+        df = df[
+            (df["target_model_dataset"] == args.target_model_dataset)
+            & (df["target_model_dataset"] == args.target_model_dataset)
+            & (df["target_model"] == args.target_model)
+            & (df["attack_name"] == args.attack_name)
         ]
 
     print(" done , instance distribution: ")
-    print(show_df_stats(DF))
+    print(show_df_stats(df))
 
     if args.max_clean_instance > 0:
         print("--- dropping clean instance to ", args.max_clean_instance)
         print(" done , instance distribution: ")
-        DF = restrict_max_instance_for_class(
-            in_df=DF,
+        df = restrict_max_instance_for_class(
+            in_df=df,
             attack_name_to_clip="clean",
             max_instance_per_class=args.max_clean_instance,
         )
-        print(show_df_stats(DF))
+        print(show_df_stats(df))
 
     print()
     print("--- starting the encoding process")
@@ -177,11 +177,11 @@ if __name__ == "__main__":
     # if test use only 10 sample
     if args.test:
         print("*** WARNING, TEST MODE, only encode 10 samples")
-        DF = DF.head(10)
+        df = df.head(10)
 
     # encode everything. DF in, dict out
-    HOLDER = encode_all_properties(
-        DF,
+    holder = encode_all_properties(
+        df,
         tp_model=args.tp_model,
         lm_perplexity_model=args.lm_perplexity_model,
         lm_proba_model=args.lm_proba_model,
@@ -204,7 +204,11 @@ if __name__ == "__main__":
         file_name = "test_" + file_name
     file_path = Path("data_tcab/reprs/samplewise", file_name)
     mkfile_if_dne(file_path)
-    holder_to_disk(HOLDER, file_path)
+    holder_to_disk(holder, file_path)
     print(f"saved in {file_path}")
 
     print(f"\nTotal time: {time.strftime('%H:%M:%S', time.gmtime(time.time()-start))}")
+
+
+if __name__ == "__main__":
+    main()
