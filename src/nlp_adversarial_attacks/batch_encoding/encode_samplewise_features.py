@@ -10,14 +10,11 @@ from transformers import (
     GPT2TokenizerFast,
 )
 
+from nlp_adversarial_attacks.feature_extraction import FeatureExtractor
 from nlp_adversarial_attacks.models.model_loading import load_target_model
-from nlp_adversarial_attacks.reactdetect.feature_extraction import FeatureExtractor
-from nlp_adversarial_attacks.reactdetect.utils.hashing import (
-    get_pk_tuple,
-    hash_pk_tuple,
-)
-from nlp_adversarial_attacks.reactdetect.utils.magic_vars import NUM_LABELS_LOOKUP
-from nlp_adversarial_attacks.reactdetect.utils.pandas_ops import no_duplicate_index
+from nlp_adversarial_attacks.utils.hashing import get_pk_tuple, hash_pk_tuple
+from nlp_adversarial_attacks.utils.magic_vars import NUM_LABELS_LOOKUP
+from nlp_adversarial_attacks.utils.pandas_ops import no_duplicate_index
 
 assert (
     torch.cuda.is_available()
@@ -305,7 +302,7 @@ def encode_all_properties(
             holder = encode_text_properties(
                 df, holder, tp_model, disable_tqdm=disable_tqdm
             )
-        if "ALL" in tasks or task == "LM_PERPLEXITY" in tasks:
+        if "ALL" in tasks or "LM_PERPLEXITY" in tasks:
             holder = encode_lm_perplexity(
                 df, holder, lm_perplexity_model, disable_tqdm=disable_tqdm
             )

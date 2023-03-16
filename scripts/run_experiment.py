@@ -16,14 +16,12 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.utils import shuffle as shuffle
 
-from nlp_adversarial_attacks.reactdetect.feature_extraction.feature_extractor import (
+from nlp_adversarial_attacks.experiment import ExperimentModel
+from nlp_adversarial_attacks.feature_extraction import (
     FeatureExtractor,
-)
-from nlp_adversarial_attacks.reactdetect.models.base_models import ExperimentModel
-from nlp_adversarial_attacks.reactdetect.utils.feature_dim_names import (
     get_feature_dim_names,
 )
-from nlp_adversarial_attacks.reactdetect.utils.file_io import mkdir_if_dne
+from nlp_adversarial_attacks.utils.file_io import mkdir_if_dne
 
 
 def check_data_experiments(experiment_dir):

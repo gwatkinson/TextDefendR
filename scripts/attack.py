@@ -13,14 +13,14 @@ from textattack import AttackArgs, Attacker
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
 from textattack.datasets import Dataset
 
-import nlp_adversarial_attacks.tcab_generation.utils as utils
-from nlp_adversarial_attacks.models.model_loading import load_target_model
-from nlp_adversarial_attacks.tcab_generation.attack import (
+import nlp_adversarial_attacks.attack.utils as utils
+from nlp_adversarial_attacks.attack import (
+    ModelWrapper,
     get_attack_recipe,
     predict,
     save_results,
 )
-from nlp_adversarial_attacks.tcab_generation.model import ModelWrapper
+from nlp_adversarial_attacks.models.model_loading import load_target_model
 
 # set environments
 os.environ["TA_CACHE_DIR"] = ".cache"  # textattack cache

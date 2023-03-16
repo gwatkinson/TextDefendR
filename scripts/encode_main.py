@@ -5,16 +5,14 @@ from pathlib import Path
 import joblib
 import pandas as pd
 
-from nlp_adversarial_attacks.batch_encoding.encode_samplewise_features import (
-    encode_all_properties,
-)
-from nlp_adversarial_attacks.reactdetect.utils.file_io import mkfile_if_dne
-from nlp_adversarial_attacks.reactdetect.utils.magic_vars import (
+from nlp_adversarial_attacks.batch_encoding import encode_all_properties
+from nlp_adversarial_attacks.utils.file_io import mkfile_if_dne
+from nlp_adversarial_attacks.utils.magic_vars import (
     SUPPORTED_ATTACKS,
     SUPPORTED_TARGET_MODEL_DATASETS,
     SUPPORTED_TARGET_MODELS,
 )
-from nlp_adversarial_attacks.reactdetect.utils.pandas_ops import (
+from nlp_adversarial_attacks.utils.pandas_ops import (
     restrict_max_instance_for_class,
     show_df_stats,
 )

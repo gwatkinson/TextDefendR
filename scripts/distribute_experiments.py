@@ -3,8 +3,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from nlp_adversarial_attacks.reactdetect.utils.experiment import Experiment
-from nlp_adversarial_attacks.reactdetect.utils.pandas_ops import (
+from nlp_adversarial_attacks.experiment import Experiment
+from nlp_adversarial_attacks.utils.pandas_ops import (
     create_ideal_train_test_split,
     downsample_clean_to_max_nonclean_class,
     downsample_clean_to_sum_nonclean_class,

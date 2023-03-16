@@ -3,14 +3,14 @@ from pathlib import Path
 import joblib
 import pandas as pd
 
-from nlp_adversarial_attacks.reactdetect.utils.file_io import grab_joblibs, load_json
-from nlp_adversarial_attacks.reactdetect.utils.hashing import get_pk_tuple
-from nlp_adversarial_attacks.reactdetect.utils.magic_vars import (
+from nlp_adversarial_attacks.utils.file_io import grab_joblibs, load_json
+from nlp_adversarial_attacks.utils.hashing import get_pk_tuple
+from nlp_adversarial_attacks.utils.magic_vars import (
     PRIMARY_KEY_FIELDS,
     SUPPORTED_TARGET_MODEL_DATASETS,
     SUPPORTED_TARGET_MODELS,
 )
-from nlp_adversarial_attacks.reactdetect.utils.pandas_ops import no_duplicate_index
+from nlp_adversarial_attacks.utils.pandas_ops import no_duplicate_index
 
 
 def check_joblib_dict(samples_dict):

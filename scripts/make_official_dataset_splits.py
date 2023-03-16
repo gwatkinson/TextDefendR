@@ -2,16 +2,14 @@ from pathlib import Path
 
 import pandas as pd
 
-from nlp_adversarial_attacks.reactdetect.utils.file_io import mkdir_if_dne
-from nlp_adversarial_attacks.reactdetect.utils.hashing import (
-    get_pk_tuple_from_pandas_row,
-)
-from nlp_adversarial_attacks.reactdetect.utils.magic_vars import (
+from nlp_adversarial_attacks.utils.file_io import mkdir_if_dne
+from nlp_adversarial_attacks.utils.hashing import get_pk_tuple_from_pandas_row
+from nlp_adversarial_attacks.utils.magic_vars import (
     PRIMARY_KEY_FIELDS,
     SUPPORTED_TARGET_MODEL_DATASETS,
     SUPPORTED_TARGET_MODELS,
 )
-from nlp_adversarial_attacks.reactdetect.utils.pandas_ops import (
+from nlp_adversarial_attacks.utils.pandas_ops import (
     convert_nested_list_to_df,
     create_ideal_train_test_split,
     drop_for_column_outside_of_values,
