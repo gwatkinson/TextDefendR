@@ -18,6 +18,7 @@
     - [2.3.3. Split data by model and trained dataset](#233-split-data-by-model-and-trained-dataset)
     - [2.3.4. Distribute data for detection experiments](#234-distribute-data-for-detection-experiments)
     - [2.3.5. Merge experiment data with feature extraction](#235-merge-experiment-data-with-feature-extraction)
+    - [2.3.6. Run experiment](#236-run-experiment)
 
 
 ## 1. Installation
@@ -291,4 +292,51 @@ options:
                         Directory of the distributed experiment to be made. (default:
                         data_tcab/detection-
                         experiments/allocine/distilcamembert/clean_vs_all/)
+```
+
+#### 2.3.6. Run experiment
+
+Take an experiment directory that contains train and test joblib files, then a classification model and log model, outputs and metrics in a unique subdirectory.
+```{bash}
+python scripts/run_experiment.py
+```
+:memo: Usage
+```
+usage: run_experiment.py [-h] [--experiment_dir EXPERIMENT_DIR]
+                         [--feature_setting {bert,bert+tp,bert+tp+lm,all}]
+                         [--model {LR,DT,RF,LGB}] [--skip_if_done] [--test]
+                         [--model_n_jobs MODEL_N_JOBS] [--cv_n_jobs CV_N_JOBS]
+                         [--solver SOLVER] [--penalty {l1,l2}]
+                         [--train_frac TRAIN_FRAC] [--n_estimators N_ESTIMATORS]  
+                         [--max_depth MAX_DEPTH] [--num_leaves NUM_LEAVES]
+                         [--disable_tune]
+
+options:
+  -h, --help            show this help message and exit
+  --experiment_dir EXPERIMENT_DIR
+                        Directory of the distributed experiment. (default:
+                        data_tcab/detection-
+                        experiments/allocine/distilcamembert/clean_vs_all/)
+  --feature_setting {bert,bert+tp,bert+tp+lm,all}
+                        Set of features to use. (default: all)
+  --model {LR,DT,RF,LGB}
+                        Classification model. (default: LR)
+  --skip_if_done        Skip if an experiment is already runned. (default: False)  
+  --test                Quick test model. (default: False)
+  --model_n_jobs MODEL_N_JOBS
+                        No. jobs to run in parallel for the model. (default: 1)
+  --cv_n_jobs CV_N_JOBS
+                        No. jobs to run in parallel for gridsearch. (default: 1)  
+  --solver SOLVER       LR solver. (default: lbfgs)
+  --penalty {l1,l2}     LR penalty. (default: l2)
+  --train_frac TRAIN_FRAC
+                        Fraction of train data to train with. (default: 1)
+  --n_estimators N_ESTIMATORS
+                        No. boosting rounds for lgb. (default: 100)
+  --max_depth MAX_DEPTH
+                        Max. depth for each tree. (default: 5)
+  --num_leaves NUM_LEAVES
+                        No. leaves per tree. (default: 32)
+  --disable_tune        Disable hyperparameters tuning with gridsearch. (default:  
+                        False)
 ```
