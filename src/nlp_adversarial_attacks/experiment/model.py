@@ -2,13 +2,16 @@ import json
 from pathlib import Path
 
 import joblib
-import numpy
+import pandas as pd
 from sklearn.base import BaseEstimator
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
     balanced_accuracy_score,
     confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
     roc_auc_score,
 )
 from sklearn.model_selection import GridSearchCV
@@ -30,30 +33,30 @@ class ExperimentModel:
         self.label_encoder = LabelEncoder()
         self.serialization_dir = serialization_dir
         self.metrics = {}
+        self.n_features = None
 
-    def fit(self, X_train, y_train):
-        y_train_encode = self.label_encoder.fit_transform(y_train)
+    def fit(self, X, y):
+        y_encode = self.label_encoder.fit_transform(y)
+        self.n_features = len(self.label_encoder.classes_)
 
-        self.classifier.fit(X_train, y_train_encode)
+        self.classifier.fit(X, y_encode)
 
-    def evaluate(self, X_train, y_train, split_name):
-        y_train_encode = self.label_encoder.transform(y_train)
-        y_pred_train = self.classifier.predict(X_train)
-        acc_train = accuracy_score(y_pred_train, y_train_encode)
-        bacc_train = balanced_accuracy_score(y_pred_train, y_train_encode)
-
-        conf_matrix_train = confusion_matrix(y_train_encode, y_pred_train).tolist()
+    def evaluate(self, X, y, split_name):
+        y_true = self.label_encoder.transform(y)
+        y_pred = self.classifier.predict(X)
 
         metrics = {
-            "accuracy": acc_train,
-            "balanced_accuracy": bacc_train,
-            "confusion_matrix": conf_matrix_train,
+            "accuracy": accuracy_score(y_true, y_pred),
+            "balanced_accuracy": balanced_accuracy_score(y_true, y_pred),
+            "confusion_matrix": confusion_matrix(y_true, y_pred).tolist(),
         }
 
-        class_names = self.label_encoder.classes_
-        if len(class_names) == 2:
-            train_roc_auc = roc_auc_score(y_train, y_pred_train)
-            metrics["roc_auc"] = train_roc_auc
+        if self.n_features == 2:
+            pos_label = self.label_encoder.transform(["perturbed"])[0]
+            metrics["recall"] = recall_score(y_true, y_pred, pos_label=pos_label)
+            metrics["precision"] = precision_score(y_true, y_pred, pos_label=pos_label)
+            metrics["f1_score"] = f1_score(y_true, y_pred)
+            metrics["roc_auc"] = roc_auc_score(y_true, y_pred)
 
         new_metrics = {split_name + "_" + key: value for key, value in metrics.items()}
 
@@ -61,11 +64,11 @@ class ExperimentModel:
 
         print(new_metrics)
 
-    def compute_metrics(self) -> None:
+    def extend_metrics(self) -> None:
         # Sort keys
         for key in [
             "best_params",
-            "label_classes",
+            "classes_labels",
             "important_features",
             "feature_names",
             "coef",
@@ -76,7 +79,7 @@ class ExperimentModel:
         self.metrics["feature_names"] = list(
             self.feature_names
         )  # make sure these are lists since numpy ND arrays are not JSON serializable
-        self.metrics["label_classes"] = list(self.label_encoder.classes_)
+        self.metrics["classes_labels"] = list(self.label_encoder.classes_)
 
         if isinstance(self.classifier, GridSearchCV):
             self.metrics["best_params"] = self.classifier.best_params_
@@ -88,38 +91,9 @@ class ExperimentModel:
             classifier = classifier[-1]
 
         if isinstance(classifier, LogisticRegression):
-            self.metrics["coef"] = classifier.coef_.tolist()
-            self.metrics["intercept"] = classifier.intercept_.tolist()
-            self.metrics["important_features"] = self.extract_important_features(
-                coefs=numpy.array(self.metrics["coef"])
+            self.metrics["coef"] = extract_coef_logistic(
+                classifier, self.feature_names, self.label_encoder.classes_
             )
-
-    def extract_important_features(self, coefs, k=10) -> dict:
-        """
-        Extract the most important features of the model.
-        Inputs:
-            lr_coef: coef_ from a lr model
-            label_map: mapping from int label to str label (maybe I missremembered and its the inverse)
-            feature_names: feature names corresponding to each dim
-        Returns: Feature importances of shape=(no. classes, no. features).
-        """
-        out = {}
-        # coefs = self.classifier.coef_
-        label_map = self.label_encoder.classes_
-
-        # extract feature coefficients for each class
-        for i, coef in enumerate(coefs):
-            best_coef_indices = numpy.argsort(coef)[::-1]
-            # display the top features for this class
-            label_name = label_map[i] if coefs.shape[0] > 1 else label_map[1]
-            # print('{} (Top {:,} features)'.format(label_name, k))
-            out[label_name] = []
-            for ndx in best_coef_indices[:k]:
-                # print('{}: {:.3f}'.format(feature_names[ndx], coef[ndx]))
-                out[label_name].append((self.feature_names[ndx], coef[ndx]))
-            # print('')
-        # print(out)
-        return out
 
     def save(self) -> None:
         """
@@ -141,3 +115,37 @@ class ExperimentModel:
         except Exception as e:
             print("Saving model failed:")
             print(e)
+
+
+def extract_coef_logistic(
+    classifier: LogisticRegression, feature_names: list, classes_labels: list
+) -> dict:
+    """Get a dataframe of the logistic regression coefficients.
+
+    Classes are in columns and features in rows.
+
+    Parameters
+    ----------
+    classifier : LogisticRegression
+        model
+    feature_names : list
+        list of feature names.
+    classes_labels : list
+        list of classes labels.
+
+    Returns
+    -------
+    dict
+        dataframe as dict
+    """
+    if len(classes_labels) == 2:
+        columns = [classes_labels[1]]
+    else:
+        columns = classes_labels
+
+    df_coef = pd.DataFrame(
+        classifier.coef_.T,
+        feature_names,
+        columns=columns,
+    )
+    return df_coef.to_dict()

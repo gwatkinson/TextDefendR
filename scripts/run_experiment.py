@@ -270,7 +270,7 @@ def training_main(
     model.evaluate(X_train, y_train, "train")
     model.evaluate(X_val, y_val, "validation")
     model.evaluate(X_test, y_test, "test")
-    model.compute_metrics()
+    model.extend_metrics()
 
     model.save()
 
