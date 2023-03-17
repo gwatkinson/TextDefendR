@@ -3,25 +3,30 @@
 [![Code quality](https://github.com/baptiste-pasquier/nlp-adversarial-attacks/actions/workflows/quality.yml/badge.svg)](https://github.com/baptiste-pasquier/nlp-adversarial-attacks/actions/workflows/quality.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-- [1. Installation](#1-installation)
-- [2. Usage](#2-usage)
-  - [2.1. DistilCamemBERT fine-tuning on Allociné](#21-distilcamembert-fine-tuning-on-allociné)
-    - [2.1.1. Model fine-tuning (optional)](#211-model-fine-tuning-optional)
-    - [2.1.2. Model evaluation](#212-model-evaluation)
-  - [2.2. TCAB Dataset Generation](#22-tcab-dataset-generation)
-    - [2.2.1. Download the Allociné dataset](#221-download-the-allociné-dataset)
-    - [2.2.2. Run some attacks with TextAttack (optional)](#222-run-some-attacks-with-textattack-optional)
-    - [2.2.3. Run attacks for TCAB dataset](#223-run-attacks-for-tcab-dataset)
-  - [2.3. TCAB Benchmark](#23-tcab-benchmark)
-    - [2.3.1. Generate the whole dataset for detection model](#231-generate-the-whole-dataset-for-detection-model)
-    - [2.3.2. Encode the dataset with feature extraction](#232-encode-the-dataset-with-feature-extraction)
-    - [2.3.3. Split data by model and trained dataset](#233-split-data-by-model-and-trained-dataset)
-    - [2.3.4. Distribute data for detection experiments](#234-distribute-data-for-detection-experiments)
-    - [2.3.5. Merge experiment data with feature extraction](#235-merge-experiment-data-with-feature-extraction)
-    - [2.3.6. Run experiment](#236-run-experiment)
+- [1. :mag\_right: Overview](#1-mag_right-overview)
+- [2. :hammer\_and\_wrench: Installation](#2-hammer_and_wrench-installation)
+- [3. :arrow\_forward: Quickstart](#3-arrow_forward-quickstart)
+- [4. :memo: Usage](#4-memo-usage)
+  - [4.1. DistilCamemBERT fine-tuning on Allociné](#41-distilcamembert-fine-tuning-on-allociné)
+    - [4.1.1. Model fine-tuning (optional)](#411-model-fine-tuning-optional)
+    - [4.1.2. Model evaluation](#412-model-evaluation)
+  - [4.2. TCAB Dataset Generation](#42-tcab-dataset-generation)
+    - [4.2.1. Download the Allociné dataset](#421-download-the-allociné-dataset)
+    - [4.2.2. Run some attacks with TextAttack (optional)](#422-run-some-attacks-with-textattack-optional)
+    - [4.2.3. Run attacks for TCAB dataset](#423-run-attacks-for-tcab-dataset)
+  - [4.3. TCAB Benchmark](#43-tcab-benchmark)
+    - [4.3.1. Generate the whole dataset for detection model](#431-generate-the-whole-dataset-for-detection-model)
+    - [4.3.2. Encode the dataset with feature extraction](#432-encode-the-dataset-with-feature-extraction)
+    - [4.3.3. Split data by model and trained dataset](#433-split-data-by-model-and-trained-dataset)
+    - [4.3.4. Distribute data for detection experiments](#434-distribute-data-for-detection-experiments)
+    - [4.3.5. Merge experiment data with feature extraction](#435-merge-experiment-data-with-feature-extraction)
+    - [4.3.6. Run experiment](#436-run-experiment)
 
+## 1. :mag_right: Overview
 
-## 1. Installation
+TODO
+
+## 2. :hammer_and_wrench: Installation
 
 1. Clone the repository
 ```bash
@@ -38,21 +43,60 @@ poetry install
 pip install -e .
 ```
 
-3. Install pre-commit
-```bash
-pre-commit install
-```
-
-4. (Optional) Install Pytorch CUDA
+3. (Optional) Install Pytorch CUDA
 ```bash
 poe torch_cuda
 ```
 
-## 2. Usage
+## 3. :arrow_forward: Quickstart
 
-### 2.1. DistilCamemBERT fine-tuning on Allociné
+:bulb: Notebook: [quickstart.ipynb](notebooks/quickstart.ipynb)
 
-#### 2.1.1. Model fine-tuning (optional)
+```{python}
+from nlp_adversarial_attacks.encoder import TextEncoder
+from nlp_adversarial_attacks.data import load_dataset
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+import torch
+```
+
+```{python}
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
+```
+
+```{python}
+df = load_dataset()
+df = df.sample(1000)
+X = df["text"]
+y = df["perturbed"]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+```
+
+```{python}
+encoder = TextEncoder(
+    enable_tp=True,
+    enable_lm_perplexity=True,
+    enable_lm_proba=True,
+    device=device)
+X_train_encoded = encoder.fit_transform(X_train)
+```
+
+```{python}
+clf = LogisticRegression(random_state=42)
+clf.fit(X_train_encoded, y_train)
+```
+
+```{python}
+X_test_encoded = encoder.transform(X_test)
+clf.score(X_test_encoded, y_test)
+```
+
+## 4. :memo: Usage
+
+### 4.1. DistilCamemBERT fine-tuning on Allociné
+
+#### 4.1.1. Model fine-tuning (optional)
 
 
 
@@ -64,7 +108,7 @@ textattack train --model cmarkea/distilcamembert-base --dataset allocine --num-e
 
 The fine-tuned model is available on HuggingFace: https://huggingface.co/baptiste-pasquier/distilcamembert-allocine
 
-#### 2.1.2. Model evaluation
+#### 4.1.2. Model evaluation
 - Evaluate the fine-tuned model with TextAttack:
 ```{bash}
 textattack eval --model-from-huggingface baptiste-pasquier/distilcamembert-allocine --dataset-from-huggingface allocine --num-examples 1000 --dataset-split test
@@ -74,14 +118,14 @@ textattack eval --model-from-huggingface baptiste-pasquier/distilcamembert-alloc
 The model offers an accuracy score of 97%.
 
 
-### 2.2. TCAB Dataset Generation
+### 4.2. TCAB Dataset Generation
 
 This section provides
 a database of attacks with a fine-tuned DistilCamemBERT model on the task of Allociné reviews classification.
 
 :globe_with_meridians: Reference: https://github.com/react-nlp/tcab_generation
 
-#### 2.2.1. Download the Allociné dataset
+#### 4.2.1. Download the Allociné dataset
 
 Run
 ```{bash}
@@ -89,14 +133,14 @@ python scripts/download_data.py
 ```
 This generates a `train.csv`, `val.csv`, and `test.csv`.
 
-#### 2.2.2. Run some attacks with TextAttack (optional)
+#### 4.2.2. Run some attacks with TextAttack (optional)
 
 Run
 ```{bash}
 textattack attack --model-from-huggingface baptiste-pasquier/distilcamembert-allocine --dataset-from-huggingface allocine --recipe deepwordbug --num-examples 50
 ```
 
-#### 2.2.3. Run attacks for TCAB dataset
+#### 4.2.3. Run attacks for TCAB dataset
 
 Run
 ```{bash}
@@ -153,20 +197,20 @@ options:
 :bulb: Notebook attack statistics: [attack_statistics.ipynb](/notebooks/attack_statistics.ipynb)
 
 
-### 2.3. TCAB Benchmark
+### 4.3. TCAB Benchmark
 
 :globe_with_meridians: Reference: https://github.com/react-nlp/tcab_benchmark
 
 :bulb: **You can run all this section in the following notebook:** [run_all_benchmark.ipynb](/notebooks/run_all_benchmark.ipynb)
 
-#### 2.3.1. Generate the whole dataset for detection model
+#### 4.3.1. Generate the whole dataset for detection model
 
 Run
 ```{bash}
 python scripts/generate_catted_dataset.py
 ```
 
-#### 2.3.2. Encode the dataset with feature extraction
+#### 4.3.2. Encode the dataset with feature extraction
 
 Extract complex features for the detection model :
 - TP: text properties
@@ -250,13 +294,13 @@ This will create the file `data_tcab/reprs/samplewise/fr+canine_distilcamembert_
 
 :bulb: Notebook for feature extraction: [feature_extraction.ipynb](/notebooks/feature_extraction.ipynb)
 
-#### 2.3.3. Split data by model and trained dataset
+#### 4.3.3. Split data by model and trained dataset
 
 ```{bash}
 python scripts/make_official_dataset_splits.py
 ```
 
-#### 2.3.4. Distribute data for detection experiments
+#### 4.3.4. Distribute data for detection experiments
 
 Create `train.csv`, `val.csv` and `test.csv` under `data_tcab/detection-experiments/` directory.
 ```{bash}
@@ -278,7 +322,7 @@ options:
                         Binary or multiclass detection. (default: clean_vs_all)
 ```
 
-#### 2.3.5. Merge experiment data with feature extraction
+#### 4.3.5. Merge experiment data with feature extraction
 
 Take an experiment directory that contains train and test csv files and make them into joblib files using cached features in `data_tcab/reprs/` directory.
 ```{bash}
@@ -296,7 +340,7 @@ options:
                         experiments/allocine/distilcamembert/clean_vs_all/)
 ```
 
-#### 2.3.6. Run experiment
+#### 4.3.6. Run experiment
 
 Take an experiment directory that contains train and test joblib files, then a classification model and log model, outputs and metrics in a unique subdirectory.
 ```{bash}
