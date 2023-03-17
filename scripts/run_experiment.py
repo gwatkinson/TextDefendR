@@ -282,7 +282,7 @@ def main(raw_args=None):
     parser.add_argument(
         "--experiment_dir",
         type=Path,
-        default="data_tcab/detection-experiments/allocine/distilcamembert/clean_vs_all/",
+        default="data_tcab/detection-experiments/allocine/distilcamembert/default/clean_vs_all/",
         help="Directory of the distributed experiment.",
     )
     parser.add_argument(

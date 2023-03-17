@@ -102,9 +102,9 @@ def main(raw_args=None):
         help="Silent tqdm progress bar.",
     )
     parser.add_argument(
-        "--prefix_file_name",
+        "--embeddings_name",
         type=str,
-        default="",
+        default="default",
         help="Prefix for resulting file name.",
     )
     parser.add_argument(
@@ -125,6 +125,7 @@ def main(raw_args=None):
         or args.attack_name == "ALLBUTCLEAN"
     )
     assert type(args.max_clean_instance) == int
+    assert args.embeddings_name != ""
 
     # io
     print("--- reading csv")
@@ -191,13 +192,19 @@ def main(raw_args=None):
         tasks=args.tasks,
     )
     file_name = (
-        "_".join([args.target_model, args.target_dataset, args.attack_name, args.tasks])
+        "_".join(
+            [
+                args.embeddings_name,
+                args.target_model,
+                args.target_dataset,
+                args.attack_name,
+                args.tasks,
+            ]
+        )
         + ".joblib"
     )
 
     print("--- saving to disk")
-    if args.prefix_file_name:
-        file_name = args.prefix_file_name + "_" + file_name
     if args.test:
         file_name = "test_" + file_name
     file_path = Path("data_tcab/embeddings", file_name)

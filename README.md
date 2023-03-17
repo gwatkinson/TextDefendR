@@ -241,7 +241,7 @@ usage: encode_main.py [-h] [--target_model TARGET_MODEL]
                       [--lm_perplexity_model LM_PERPLEXITY_MODEL]
                       [--lm_proba_model LM_PROBA_MODEL]
                       [--target_model_name_or_path TARGET_MODEL_NAME_OR_PATH] [--test]  
-                      [--disable_tqdm] [--prefix_file_name PREFIX_FILE_NAME]
+                      [--disable_tqdm] [--embeddings_name EMBEDDINGS_NAME]
                       [--tasks TASKS]
 
 options:
@@ -271,8 +271,8 @@ options:
                         allocine)
   --test                Only computes first 10 instance. (default: False)
   --disable_tqdm        Silent tqdm progress bar. (default: False)
-  --prefix_file_name PREFIX_FILE_NAME
-                        Prefix for resulting file name. (default: )
+  --embeddings_name EMBEDDINGS_NAME
+                        Prefix for resulting file name. (default: default)
   --tasks TASKS         Tasks to perform in string format (e.g.
                         'TP,LM_PROBA,LM_PERPLEXITY,TM'). (default: ALL)
 ```
@@ -283,7 +283,7 @@ python scripts/encode_main.py \
     --tp_model cmarkea/distilcamembert-base-nli \
     --lm_perplexity_model asi/gpt-fr-cased-small \
     --lm_proba_model cmarkea/distilcamembert-base \
-    --prefix_file_name fr+small \
+    --embeddings_name fr+small \
 ```
 This will create the file `data_tcab/embeddings/fr+small_distilcamembert_allocine_ALL_ALL.joblib`. This command is quite long, around 7 hours for the `Allociné` dataset.
 
@@ -291,7 +291,7 @@ To generate only the TP features with another model, run :
 ```{bash}
 python scripts/encode_main.py \
     --tp_model google/canine-c \
-    --prefix_file_name fr+canine \
+    --embeddings_name fr+canine \
     --tasks TP
 ```
 This will create the file `data_tcab/embeddings/fr+canine_distilcamembert_allocine_ALL_TP.joblib`. This is quite fast compared to the previous command (around 5 minutes).
@@ -323,6 +323,7 @@ python scripts/distribute_experiments.py
 ```
 usage: distribute_experiments.py [-h] [--target_dataset TARGET_DATASET]
                                  [--target_model TARGET_MODEL]
+                                 [--embeddings_name EMBEDDINGS_NAME]
                                  [--experiment_setting {clean_vs_all,multiclass_with_clean}]
 
 options:
@@ -331,6 +332,8 @@ options:
                         Dataset attacked. (default: allocine)
   --target_model TARGET_MODEL
                         Target model type. (default: distilcamembert)
+  --embeddings_name EMBEDDINGS_NAME
+                        Embeddings name (prefix). (default: default)
   --experiment_setting {clean_vs_all,multiclass_with_clean}
                         Binary or multiclass detection. (default: clean_vs_all)
 ```
@@ -348,9 +351,9 @@ usage: make_experiment.py [-h] [--experiment_dir EXPERIMENT_DIR]
 options:
   -h, --help            show this help message and exit
   --experiment_dir EXPERIMENT_DIR
-                        Directory of the distributed experiment to be made. (default:
+                        Directory of the distributed experiment to be made. (default:  
                         data_tcab/detection-
-                        experiments/allocine/distilcamembert/clean_vs_all/)
+                        experiments/allocine/distilcamembert/default/clean_vs_all/)
 ```
 
 #### 4.3.5. Run experiment
@@ -375,7 +378,7 @@ options:
   --experiment_dir EXPERIMENT_DIR
                         Directory of the distributed experiment. (default:
                         data_tcab/detection-
-                        experiments/allocine/distilcamembert/clean_vs_all/)
+                        experiments/allocine/distilcamembert/default/clean_vs_all/)  
   --feature_setting {bert,bert+tp,bert+tp+lm,all}
                         Set of features to use. (default: all)
   --model {LR,DT,RF,LGB}

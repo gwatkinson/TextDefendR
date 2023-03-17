@@ -122,6 +122,12 @@ def main(raw_args=None):
         help="Target model type.",
     )
     parser.add_argument(
+        "--embeddings_name",
+        type=str,
+        default="default",
+        help="Embeddings name (prefix).",
+    )
+    parser.add_argument(
         "--experiment_setting",
         type=str,
         choices=["clean_vs_all", "multiclass_with_clean"],
@@ -149,6 +155,7 @@ def main(raw_args=None):
         "detection-experiments",
         args.target_dataset,
         args.target_model,
+        args.embeddings_name,
         args.experiment_setting,
     )
     train_df, val_df, test_df = get_splitted_exp(in_dir)

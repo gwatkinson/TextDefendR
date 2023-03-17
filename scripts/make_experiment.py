@@ -33,7 +33,10 @@ def check_joblib_dict(samples_dict):
 
 
 def load_known_instances(
-    rootdir_with_joblib_file, target_model, target_dataset, lazy_loading
+    rootdir_with_joblib_file,
+    target_model,
+    target_dataset,
+    embeddings_name,
 ):
     assert target_model in SUPPORTED_TARGET_MODELS
     assert target_dataset in SUPPORTED_TARGET_DATASETS
@@ -43,9 +46,8 @@ def load_known_instances(
 
     all_jblb = grab_joblibs(rootdir_with_joblib_file)
 
-    if lazy_loading:
-        all_jblb = [jb for jb in all_jblb if target_model + "_" in jb.name]
-        all_jblb = [jb for jb in all_jblb if target_dataset + "_" in jb.name]
+    filter_string = "_".join([embeddings_name, target_model, target_dataset])
+    all_jblb = [jblb for jblb in all_jblb if jblb.name.startswith(filter_string)]
 
     print(f"--- No. joblib files of varied size to read: {len(all_jblb):,}")
 
@@ -104,7 +106,7 @@ def main(raw_args=None):
     parser.add_argument(
         "--experiment_dir",
         type=str,
-        default="data_tcab/detection-experiments/allocine/distilcamembert/clean_vs_all/",
+        default="data_tcab/detection-experiments/allocine/distilcamembert/default/clean_vs_all/",
         help="Directory of the distributed experiment to be made.",
     )
     main_args = parser.parse_args(raw_args)
@@ -124,12 +126,11 @@ def main(raw_args=None):
 
     print("making exp into... ", out_dir)
 
-    lazy_loading = True
     known_instances = load_known_instances(
         "data_tcab/embeddings/",
         target_model=exp_args.target_model,
         target_dataset=exp_args.target_dataset,
-        lazy_loading=lazy_loading,
+        embeddings_name=exp_args.embeddings_name,
     )
 
     print("\n--- creating train.joblib")
