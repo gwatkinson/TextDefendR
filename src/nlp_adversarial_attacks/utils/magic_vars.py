@@ -1,5 +1,5 @@
 SUPPORTED_TARGET_MODELS = {"roberta", "bert", "distilcamembert"}
-SUPPORTED_TARGET_MODEL_DATASETS = {
+SUPPORTED_TARGET_DATASETS = {
     "fnc1",
     "civil_comments",
     "hatebase",
@@ -51,8 +51,8 @@ PRIMARY_KEY_FIELDS = sorted(
         "attack_name",
         "attack_toolchain",
         "scenario",
+        "target_dataset",
         "target_model",
-        "target_model_dataset",
         "test_index",
     ]
 )

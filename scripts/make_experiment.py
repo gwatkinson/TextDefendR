@@ -8,7 +8,7 @@ from nlp_adversarial_attacks.utils.file_io import grab_joblibs, load_json
 from nlp_adversarial_attacks.utils.hashing import get_pk_tuple
 from nlp_adversarial_attacks.utils.magic_vars import (
     PRIMARY_KEY_FIELDS,
-    SUPPORTED_TARGET_MODEL_DATASETS,
+    SUPPORTED_TARGET_DATASETS,
     SUPPORTED_TARGET_MODELS,
 )
 from nlp_adversarial_attacks.utils.pandas_ops import no_duplicate_index
@@ -33,21 +33,19 @@ def check_joblib_dict(samples_dict):
 
 
 def load_known_instances(
-    rootdir_with_joblib_file, target_model, target_model_dataset, lazy_loading
+    rootdir_with_joblib_file, target_model, target_dataset, lazy_loading
 ):
     assert target_model in SUPPORTED_TARGET_MODELS
-    assert target_model_dataset in SUPPORTED_TARGET_MODEL_DATASETS
+    assert target_dataset in SUPPORTED_TARGET_DATASETS
 
     print("\n--- loading known instances from ", rootdir_with_joblib_file)
-    print(
-        f"--- target_model: {target_model}, target_model_dataset: {target_model_dataset}"
-    )
+    print(f"--- target_model: {target_model}, target_dataset: {target_dataset}")
 
     all_jblb = grab_joblibs(rootdir_with_joblib_file)
 
     if lazy_loading:
         all_jblb = [jb for jb in all_jblb if target_model + "_" in jb.name]
-        all_jblb = [jb for jb in all_jblb if target_model_dataset + "_" in jb.name]
+        all_jblb = [jb for jb in all_jblb if target_dataset + "_" in jb.name]
 
     print(f"--- No. joblib files of varied size to read: {len(all_jblb):,}")
 
@@ -63,6 +61,8 @@ def load_known_instances(
             pk = instance["primary_key"]
             pk = tuple(pk)
             assert isinstance(pk, tuple)
+            if pk in known_samples:
+                raise ValueError("Duplicate instance in joblib files.")
             known_samples[pk] = instance
 
     print(
@@ -128,7 +128,7 @@ def main(raw_args=None):
     known_instances = load_known_instances(
         "data_tcab/reprs/samplewise",
         target_model=exp_args.target_model,
-        target_model_dataset=exp_args.target_model_dataset,
+        target_dataset=exp_args.target_dataset,
         lazy_loading=lazy_loading,
     )
 

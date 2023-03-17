@@ -6,6 +6,7 @@ import os
 import sys
 import time
 from datetime import datetime
+from pathlib import Path
 
 import pandas as pd
 import torch
@@ -73,7 +74,7 @@ def main(args):
         assert args.attack_n_samples == 0
 
     # setup output directory
-    out_dir = os.path.join(
+    out_dir = Path(
         args.dir_out,
         args.dataset_name,
         args.model_name,
@@ -82,12 +83,12 @@ def main(args):
         str(args.attack_n_samples),
     )
     os.makedirs(out_dir, exist_ok=True)
-    logger = utils.get_logger(os.path.join(out_dir, "log.txt"))
+    logger = utils.get_logger(Path(out_dir, "log.txt"))
     logger.info(args)
     logger.info(f"Timestamp: {datetime.now()}")
 
     # save config file
-    utils.cmd_args_to_yaml(args, os.path.join(out_dir, "config.yml"))
+    utils.cmd_args_to_yaml(args, Path(out_dir, "config.yml"))
 
     # set no. labels
     num_labels = 2
@@ -106,13 +107,13 @@ def main(args):
 
     # read in the test set
     logger.info("\nLoading test data set...")
-    dir_dataset = os.path.join(args.dir_dataset, args.dataset_name)
+    dir_dataset = Path(args.dir_dataset, args.dataset_name)
 
-    if os.path.exists(os.path.join(dir_dataset, "test.csv")):
-        test_df = pd.read_csv(os.path.join(dir_dataset, "test.csv"))
+    if os.path.exists(Path(dir_dataset, "test.csv")):
+        test_df = pd.read_csv(Path(dir_dataset, "test.csv"))
 
-    elif os.path.join(dir_dataset, "data.csv"):
-        test_df = pd.read_csv(os.path.join(dir_dataset, "data.csv"))
+    elif Path(dir_dataset, "data.csv"):
+        test_df = pd.read_csv(Path(dir_dataset, "data.csv"))
 
     if "index" in test_df.columns:
         del test_df["index"]
@@ -140,23 +141,26 @@ def main(args):
             proba = proba_test[i]
 
             result = {
-                "target_model_train_dataset": args.target_model_train_dataset,
-                "target_model_dataset": args.dataset_name,
+                "scenario": args.task_name,
                 "target_model": args.model_name,
+                "target_model_train_dataset": args.target_model_train_dataset,
+                "attack_toolchain": args.attack_toolchain,
                 "attack_name": args.attack_name,
+                "target_dataset": args.dataset_name,
                 "test_index": test_indices[i],
                 "ground_truth": y_test[i],
-                "status": "clean",
                 "original_text": text,
-                "original_output": proba,
                 "perturbed_text": text,
+                "original_output": proba,
                 "perturbed_output": proba,
+                "status": "clean",
                 "num_queries": 0,
                 "frac_words_changed": 0,
             }
+
             results.append(result)
 
-        save_results(args, results, out_dir, logger, done=True)
+        save_results(results, out_dir, logger)
 
         # cleanup and exit
         utils.remove_logger(logger)
@@ -227,7 +231,7 @@ def main(args):
         attack_args = AttackArgs(
             num_examples=-1,
             query_budget=args.attack_query_budget,
-            log_summary_to_json=os.path.join(out_dir, "summary.json"),
+            log_summary_to_json=Path(out_dir, "summary.json").as_posix(),
         )
         attacker = Attacker(attack, dataset, attack_args)
 
@@ -249,17 +253,19 @@ def main(args):
             num_words_changed = len(og.attacked_text.all_words_diff(pp.attacked_text))
 
             result = {
-                "target_model_train_dataset": args.target_model_train_dataset,
-                "target_model_dataset": args.dataset_name,
+                "scenario": args.task_name,
                 "target_model": args.model_name,
+                "target_model_train_dataset": args.target_model_train_dataset,
+                "attack_toolchain": args.attack_toolchain,
                 "attack_name": args.attack_name,
+                "target_dataset": args.dataset_name,
                 "test_index": test_indices[i],
                 "ground_truth": y_test[i],
-                "status": status,
                 "original_text": og.attacked_text.text,
-                "original_output": og.raw_output.tolist(),
                 "perturbed_text": pp.attacked_text.text,
+                "original_output": og.raw_output.tolist(),
                 "perturbed_output": pp.raw_output.tolist(),
+                "status": status,
                 "num_queries": attack_result.num_queries,
             }
             try:
@@ -285,7 +291,7 @@ def main(args):
 
         # save leftover results
         logger.info(f"\nSaving results to {out_dir}/...")
-        save_results(args, results, out_dir, logger, done=True)
+        save_results(results, out_dir, logger)
 
     logger.info(
         f"\nAttack time: {time.strftime('%H:%M:%S', time.gmtime(time.time()-t))}"

@@ -56,36 +56,30 @@ def main():
         print(f"reading {csv}")
         df = pd.read_csv(csv)
         datas.append(df)
-    whole_catted_dataset = concat_multiple_df(datas)
-    assert "test_ndx" not in whole_catted_dataset.keys()
-    assert "dataset" not in whole_catted_dataset.keys()
-    whole_catted_dataset["test_ndx"] = whole_catted_dataset["test_index"]
-    whole_catted_dataset["dataset"] = whole_catted_dataset["target_model_dataset"]
-    whole_catted_dataset = refresh_index(whole_catted_dataset)
-    whole_catted_dataset = all_cols_nan_to_strnone(whole_catted_dataset)
-    whole_catted_dataset = address_clean_samples(whole_catted_dataset)
+    attack_dataset = concat_multiple_df(datas)
+    attack_dataset = refresh_index(attack_dataset)
+    attack_dataset = all_cols_nan_to_strnone(attack_dataset)
+    attack_dataset = address_clean_samples(attack_dataset)
     print("done, all data statistics: ")
-    print(show_df_stats(whole_catted_dataset))
-
-    # whole_catted_dataset.to_csv('whole_catted_dataset_unfiltered.csv')
+    print(show_df_stats(attack_dataset))
 
     print("--- doing global filtering over all data")
     print("dropping unsuccessful attacks...")
-    whole_catted_dataset = drop_for_column_outside_of_values(
-        whole_catted_dataset, "status", ["success", "clean"]
+    attack_dataset = drop_for_column_outside_of_values(
+        attack_dataset, "status", ["success", "clean"]
     )
 
     print("dropping invalid attacks...")
-    whole_catted_dataset = drop_for_column_outside_of_values(
-        whole_catted_dataset, "attack_name", SUPPORTED_ATTACKS
+    attack_dataset = drop_for_column_outside_of_values(
+        attack_dataset, "attack_name", SUPPORTED_ATTACKS
     )
 
-    whole_catted_dataset = refresh_index(whole_catted_dataset)
+    attack_dataset = refresh_index(attack_dataset)
     print("done, all data statistics: ")
-    print(show_df_stats(whole_catted_dataset))
+    print(show_df_stats(attack_dataset))
 
     print("-- saving to disk")
-    whole_catted_dataset.to_csv("data_tcab/whole_catted_dataset.csv", index=False)
+    attack_dataset.to_csv("data_tcab/attack_dataset.csv", index=False)
 
 
 if __name__ == "__main__":

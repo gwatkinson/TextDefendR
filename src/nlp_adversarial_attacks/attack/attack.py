@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -118,35 +118,39 @@ def predict(args, model, test_df, device, logger=None):
     return y_pred, y_proba
 
 
-def save_results(args, results, out_dir, logger, done=False):
+def save_results(results, out_dir, logger):
     """
     Save adversarial samples and summary.
     """
 
     # compile results
     df = pd.DataFrame(results)
-    df["scenario"] = args.task_name
-    df["attack_toolchain"] = args.attack_toolchain
-    df["attacked_all_instances"] = done
 
     # rearrange columns
     all_cols = df.columns.tolist()
     required_cols = [
         "scenario",
-        "target_model_dataset",
         "target_model",
+        "target_model_train_dataset",
         "attack_toolchain",
         "attack_name",
+        "target_dataset",
+        "test_index",
         "original_text",
         "perturbed_text",
+        "ground_truth",
         "original_output",
         "perturbed_output",
         "status",
+        "num_queries",
+        "frac_words_changed",
     ]
     extra_cols = [x for x in all_cols if x not in required_cols]
-    df = df[required_cols + extra_cols]
+    if len(extra_cols):
+        raise ValueError(f"Extra columns: {extra_cols}")
+    df = df[required_cols]
 
     # save all samples
     pd.set_option("display.max_columns", 100)
     logger.info(f"\nResults:\n{df.head()}")
-    df.to_csv(os.path.join(out_dir, "results.csv"), index=None)
+    df.to_csv(Path(out_dir, "results.csv"), index=False)

@@ -6,7 +6,7 @@ from nlp_adversarial_attacks.utils.file_io import mkdir_if_dne
 from nlp_adversarial_attacks.utils.hashing import get_pk_tuple_from_pandas_row
 from nlp_adversarial_attacks.utils.magic_vars import (
     PRIMARY_KEY_FIELDS,
-    SUPPORTED_TARGET_MODEL_DATASETS,
+    SUPPORTED_TARGET_DATASETS,
     SUPPORTED_TARGET_MODELS,
 )
 from nlp_adversarial_attacks.utils.pandas_ops import (
@@ -28,20 +28,20 @@ def get_src_instance_identifier_from_pandas_row(pandas_row):
     e.g. #777 sentence in SST is attacked by 7 attacks, those will share this identifier
     """
     return (
-        pandas_row["target_model_dataset"],
+        pandas_row["target_dataset"],
         pandas_row["test_index"],
     )
 
 
-def get_dataset_df(whole_catted_dataset_path):
+def get_dataset_df(attack_dataset_path):
     """
-    Read in the whole_catted_dataset.csv. Do some sanity check on it as well
+    Read in the attack_dataset.csv. Do some sanity check on it as well
     Pad useful column called pk, and another src instance identifier
     """
-    odf = pd.read_csv(whole_catted_dataset_path)
+    odf = pd.read_csv(attack_dataset_path)
     print("--- dropping unsupported datasets")
     odf = drop_for_column_outside_of_values(
-        odf, "target_model_dataset", SUPPORTED_TARGET_MODEL_DATASETS
+        odf, "target_dataset", SUPPORTED_TARGET_DATASETS
     )
     odf = odf.sample(frac=1, random_state=RANDOM_SEED)
     odf["pk"] = odf.apply(lambda row: get_pk_tuple_from_pandas_row(row), axis=1)
@@ -55,7 +55,7 @@ def get_dataset_df(whole_catted_dataset_path):
 
 def get_splits_for_dataset(dataset, df):
     print("--- filtering for dataset ", df.shape)
-    df = drop_for_column_outside_of_values(df, "target_model_dataset", [dataset])
+    df = drop_for_column_outside_of_values(df, "target_dataset", [dataset])
     train_df, test_val_df = create_ideal_train_test_split(df, split_ratio=0.6)
     val_df, test_df = create_ideal_train_test_split(test_val_df, split_ratio=0.5)
     print("--- Train DF stats ---")
@@ -86,10 +86,10 @@ def get_splits_for_dataset(dataset, df):
         ), "attacks missing in either of the splits"
 
     assert (
-        set(train_df["target_model_dataset"])
-        == set(test_df["target_model_dataset"])
-        == set(val_df["target_model_dataset"])
-    ), "discrepancy in target_model_dataset column across splits"
+        set(train_df["target_dataset"])
+        == set(test_df["target_dataset"])
+        == set(val_df["target_dataset"])
+    ), "discrepancy in target_dataset column across splits"
     assert (
         set(train_df["target_model"])
         == set(test_df["target_model"])
@@ -111,12 +111,12 @@ def get_splits_for_tm(tm, train_df, val_df, test_df):
     print(show_df_stats(val_df))
 
     assert (
-        set(train_df["target_model_dataset"])
-        == set(test_df["target_model_dataset"])
-        == set(val_df["target_model_dataset"])
-    ), "discrepancy in target_model_dataset column across splits"
+        set(train_df["target_dataset"])
+        == set(test_df["target_dataset"])
+        == set(val_df["target_dataset"])
+    ), "discrepancy in target_dataset column across splits"
 
-    dataset = list(set(train_df["target_model_dataset"]))[0]
+    dataset = list(set(train_df["target_dataset"]))[0]
     if dataset == "wikipedia_personal":
         assert len(set(train_df["attack_name"])) >= len(
             set(val_df["attack_name"])
@@ -147,7 +147,7 @@ def get_splits_for_tm(tm, train_df, val_df, test_df):
 
 def main():
     print("--- reading data")
-    df = get_dataset_df("data_tcab/whole_catted_dataset.csv")
+    df = get_dataset_df("data_tcab/attack_dataset.csv")
 
     print("--- dropping duplicates")
     df = df.drop_duplicates(subset=PRIMARY_KEY_FIELDS)
@@ -161,8 +161,8 @@ def main():
     combined_dump_path = Path("data_tcab", "official_TCAB_splits", "combined")
     mkdir_if_dne(combined_dump_path)
 
-    for dataset in SUPPORTED_TARGET_MODEL_DATASETS:
-        if dataset in df["target_model_dataset"].unique():
+    for dataset in SUPPORTED_TARGET_DATASETS:
+        if dataset in df["target_dataset"].unique():
             print(dataset)
             train_df_temp, val_df_temp, test_df_temp = get_splits_for_dataset(
                 dataset, df

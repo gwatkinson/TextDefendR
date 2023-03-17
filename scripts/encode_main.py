@@ -9,7 +9,7 @@ from nlp_adversarial_attacks.batch_encoding import encode_all_properties
 from nlp_adversarial_attacks.utils.file_io import mkfile_if_dne
 from nlp_adversarial_attacks.utils.magic_vars import (
     SUPPORTED_ATTACKS,
-    SUPPORTED_TARGET_MODEL_DATASETS,
+    SUPPORTED_TARGET_DATASETS,
     SUPPORTED_TARGET_MODELS,
 )
 from nlp_adversarial_attacks.utils.pandas_ops import (
@@ -40,7 +40,7 @@ def main(raw_args=None):
         help="Target model type.",
     )
     parser.add_argument(
-        "--target_model_dataset",
+        "--target_dataset",
         type=str,
         default="allocine",
         help="Dataset attacked.",
@@ -117,8 +117,8 @@ def main(raw_args=None):
     # get args, sanity check
     args = parser.parse_args(raw_args)
     assert args.target_model in SUPPORTED_TARGET_MODELS
-    assert args.target_model_dataset in SUPPORTED_TARGET_MODEL_DATASETS
-    assert args.target_model_train_dataset in SUPPORTED_TARGET_MODEL_DATASETS
+    assert args.target_dataset in SUPPORTED_TARGET_DATASETS
+    assert args.target_model_train_dataset in SUPPORTED_TARGET_DATASETS
     assert (
         args.attack_name in SUPPORTED_ATTACKS
         or args.attack_name == "ALL"
@@ -128,7 +128,7 @@ def main(raw_args=None):
 
     # io
     print("--- reading csv")
-    df = pd.read_csv("data_tcab/whole_catted_dataset.csv")
+    df = pd.read_csv("data_tcab/attack_dataset.csv")
     print()
     print("--- stats before filtering")
     print(show_df_stats(df))
@@ -138,22 +138,22 @@ def main(raw_args=None):
     if args.attack_name == "ALL":
         print("--- attack name is ALL, using all attacks")
         df = df[
-            (df["target_model_dataset"] == args.target_model_dataset)
+            (df["target_dataset"] == args.target_dataset)
             & (df["target_model_train_dataset"] == args.target_model_train_dataset)
             & (df["target_model"] == args.target_model)
         ]
     elif args.attack_name == "ALLBUTCLEAN":
         print("--- attack name is ALLBUTCLEAN, using all attacks but clean")
         df = df[
-            (df["target_model_dataset"] == args.target_model_dataset)
+            (df["target_dataset"] == args.target_dataset)
             & (df["target_model_train_dataset"] == args.target_model_train_dataset)
             & (df["target_model"] == args.target_model)
             & (df["attack_name"] != "clean")
         ]
     else:
         df = df[
-            (df["target_model_dataset"] == args.target_model_dataset)
-            & (df["target_model_dataset"] == args.target_model_dataset)
+            (df["target_dataset"] == args.target_dataset)
+            & (df["target_dataset"] == args.target_dataset)
             & (df["target_model"] == args.target_model)
             & (df["attack_name"] == args.attack_name)
         ]
@@ -191,9 +191,7 @@ def main(raw_args=None):
         tasks=args.tasks,
     )
     file_name = (
-        "_".join(
-            [args.target_model, args.target_model_dataset, args.attack_name, args.tasks]
-        )
+        "_".join([args.target_model, args.target_dataset, args.attack_name, args.tasks])
         + ".joblib"
     )
 

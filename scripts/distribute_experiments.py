@@ -110,7 +110,7 @@ def main(raw_args=None):
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     parser.add_argument(
-        "--target_model_dataset",
+        "--target_dataset",
         type=str,
         default="allocine",
         help="Dataset attacked.",
@@ -135,7 +135,7 @@ def main(raw_args=None):
             "data_tcab",
             "official_TCAB_splits",
             "splits_by_dataset_and_tm",
-            args.target_model_dataset,
+            args.target_dataset,
             args.target_model,
         )
         assert Path(in_dir, "train.csv").exists(), f"no train.csv in {in_dir}"
@@ -147,7 +147,7 @@ def main(raw_args=None):
     out_dir = Path(
         "data_tcab",
         "detection-experiments",
-        args.target_model_dataset,
+        args.target_dataset,
         args.target_model,
         args.experiment_setting,
     )

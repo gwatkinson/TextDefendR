@@ -10,51 +10,44 @@ Accuracy: 0.971
 Time: 00:01:08
 
 Results:
-    scenario target_model_dataset     target_model attack_toolchain  \
-0  sentiment             allocine  distilcamembert             none
-1  sentiment             allocine  distilcamembert             none
-2  sentiment             allocine  distilcamembert             none
-3  sentiment             allocine  distilcamembert             none
-4  sentiment             allocine  distilcamembert             none
+    scenario     target_model target_model_train_dataset attack_toolchain  \
+0  sentiment  distilcamembert                   allocine             none
+1  sentiment  distilcamembert                   allocine             none
+2  sentiment  distilcamembert                   allocine             none
+3  sentiment  distilcamembert                   allocine             none
+4  sentiment  distilcamembert                   allocine             none
 
-  attack_name                                      original_text  \
-0       clean  Magnifique épopée, une belle histoire, touchan...
-1       clean  Je n'ai pas aimé mais pourtant je lui mets 2 é...
-2       clean  Un dessin animé qui brille par sa féerie et se...
-3       clean  Si c'est là le renouveau du cinéma français, c...
-4       clean  Et pourtant on s’en Doutait !Second volet très...
+  attack_name target_dataset  test_index  \
+0       clean       allocine           0
+1       clean       allocine           1
+2       clean       allocine           2
+3       clean       allocine           3
+4       clean       allocine           4
 
-                                      perturbed_text  \
+                                       original_text  \
 0  Magnifique épopée, une belle histoire, touchan...
 1  Je n'ai pas aimé mais pourtant je lui mets 2 é...
 2  Un dessin animé qui brille par sa féerie et se...
 3  Si c'est là le renouveau du cinéma français, c...
 4  Et pourtant on s’en Doutait !Second volet très...
 
-                                original_output  \
-0     [0.0004709608615801346, 0.99952903913842]
-1      [0.6205607487892884, 0.3794392512107116]
-2    [0.006190023822078167, 0.9938099761779218]
-3   [0.9997258739819282, 0.0002741260180717459]
-4  [0.9996825656677577, 0.00031743433224216944]
+                                      perturbed_text  ground_truth  \
+0  Magnifique épopée, une belle histoire, touchan...             1
+1  Je n'ai pas aimé mais pourtant je lui mets 2 é...             0
+2  Un dessin animé qui brille par sa féerie et se...             1
+3  Si c'est là le renouveau du cinéma français, c...             0
+4  Et pourtant on s’en Doutait !Second volet très...             0
 
-                               perturbed_output status  \
-0     [0.0004709608615801346, 0.99952903913842]  clean
-1      [0.6205607487892884, 0.3794392512107116]  clean
-2    [0.006190023822078167, 0.9938099761779218]  clean
-3   [0.9997258739819282, 0.0002741260180717459]  clean
-4  [0.9996825656677577, 0.00031743433224216944]  clean
+                   original_output                 perturbed_output status  \
+0  [4.70960862e-04 9.99529039e-01]  [4.70960862e-04 9.99529039e-01]  clean
+1          [0.62056075 0.37943925]          [0.62056075 0.37943925]  clean
+2          [0.00619002 0.99380998]          [0.00619002 0.99380998]  clean
+3  [9.99725874e-01 2.74126018e-04]  [9.99725874e-01 2.74126018e-04]  clean
+4  [9.99682566e-01 3.17434332e-04]  [9.99682566e-01 3.17434332e-04]  clean
 
-  target_model_train_dataset  test_index  ground_truth  num_queries  \
-0                   allocine           0             1            0
-1                   allocine           1             0            0
-2                   allocine           2             1            0
-3                   allocine           3             0            0
-4                   allocine           4             0            0
-
-   frac_words_changed  attacked_all_instances
-0                   0                    True
-1                   0                    True
-2                   0                    True
-3                   0                    True
-4                   0                    True
+   num_queries  frac_words_changed
+0            0                   0
+1            0                   0
+2            0                   0
+3            0                   0
+4            0                   0

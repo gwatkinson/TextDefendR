@@ -36,11 +36,7 @@ def show_df_stats(df):
     out = ""
     out += "total_instances: " + str(len(df)) + ", \n"
     out += "attack_name: " + str(dict(Counter(df["attack_name"]))) + ", \n"
-    out += (
-        "target_model_dataset: "
-        + str(dict(Counter(df["target_model_dataset"])))
-        + ", \n"
-    )
+    out += "target_dataset: " + str(dict(Counter(df["target_dataset"]))) + ", \n"
     out += "target_model: " + str(dict(Counter(df["target_model"]))) + ", \n"
     out += "status: " + str(dict(Counter(df["status"]))) + ", \n"
     out += "attack_toolchain: " + str(dict(Counter(df["attack_toolchain"]))) + ", \n"

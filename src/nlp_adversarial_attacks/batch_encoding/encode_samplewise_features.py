@@ -218,19 +218,19 @@ def encode_tm_properties(
     print("preparing tm properties encoding")
     assert no_duplicate_index(df)
 
-    assert "target_model_dataset" in df.columns
-    assert df["target_model_dataset"].nunique() == 1
-    target_model_dataset = df["target_model_dataset"][0]
+    assert "target_dataset" in df.columns
+    assert df["target_dataset"].nunique() == 1
+    target_dataset = df["target_dataset"][0]
 
     assert "target_model" in df.columns
     assert df["target_model"].nunique() == 1
 
     # lookup how many labels are there
-    num_labels = NUM_LABELS_LOOKUP[target_model_dataset]
+    num_labels = NUM_LABELS_LOOKUP[target_dataset]
 
     print("--- loading target model")
     print(
-        f"{pretrained_model_name_or_path} ({target_model_name} trained on {target_model_dataset})"
+        f"{pretrained_model_name_or_path} ({target_model_name} trained on {target_dataset})"
     )
     target_model = load_target_model(
         model_name=target_model_name,

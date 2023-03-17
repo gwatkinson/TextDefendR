@@ -207,7 +207,7 @@ options:
 
 Run
 ```{bash}
-python scripts/generate_catted_dataset.py
+python scripts/generate_attack_dataset.py
 ```
 
 #### 4.3.2. Encode the dataset with feature extraction
@@ -226,7 +226,7 @@ python scripts/encode_main.py
 :memo: Usage
 ```
 usage: encode_main.py [-h] [--target_model TARGET_MODEL]
-                      [--target_model_dataset TARGET_MODEL_DATASET]
+                      [--target_dataset TARGET_DATASET]
                       [--target_model_train_dataset TARGET_MODEL_TRAIN_DATASET]
                       [--attack_name ATTACK_NAME]
                       [--max_clean_instance MAX_CLEAN_INSTANCE] [--tp_model TP_MODEL]  
@@ -240,7 +240,7 @@ options:
   -h, --help            show this help message and exit
   --target_model TARGET_MODEL
                         Target model type. (default: distilcamembert)
-  --target_model_dataset TARGET_MODEL_DATASET
+  --target_dataset TARGET_DATASET
                         Dataset attacked. (default: allocine)
   --target_model_train_dataset TARGET_MODEL_TRAIN_DATASET
                         Dataset used to train the target model. (default: allocine)  
@@ -308,13 +308,13 @@ python scripts/distribute_experiments.py
 ```
 :memo: Usage
 ```
-usage: distribute_experiments.py [-h] [--target_model_dataset TARGET_MODEL_DATASET]
+usage: distribute_experiments.py [-h] [--target_dataset TARGET_DATASET]
                                  [--target_model TARGET_MODEL]
                                  [--experiment_setting {clean_vs_all,multiclass_with_clean}]
 
 options:
   -h, --help            show this help message and exit
-  --target_model_dataset TARGET_MODEL_DATASET
+  --target_dataset TARGET_DATASET
                         Dataset attacked. (default: allocine)
   --target_model TARGET_MODEL
                         Target model type. (default: distilcamembert)

@@ -6015,26 +6015,33 @@ Negative (100%) --> Negative (74%)
 Saving results to attacks/allocine\distilcamembert\textattack\input_reduction\2000/...
 
 Results:
-    scenario target_model_dataset     target_model attack_toolchain  \
-0  sentiment             allocine  distilcamembert       textattack
-1  sentiment             allocine  distilcamembert       textattack
-2  sentiment             allocine  distilcamembert       textattack
-3  sentiment             allocine  distilcamembert       textattack
-4  sentiment             allocine  distilcamembert       textattack
+    scenario     target_model target_model_train_dataset attack_toolchain  \
+0  sentiment  distilcamembert                   allocine       textattack
+1  sentiment  distilcamembert                   allocine       textattack
+2  sentiment  distilcamembert                   allocine       textattack
+3  sentiment  distilcamembert                   allocine       textattack
+4  sentiment  distilcamembert                   allocine       textattack
 
-       attack_name                                      original_text  \
-0  input_reduction  Magnifique épopée, une belle histoire, touchan...
-1  input_reduction  Je n'ai pas aimé mais pourtant je lui mets 2 é...
-2  input_reduction  Un dessin animé qui brille par sa féerie et se...
-3  input_reduction  Si c'est là le renouveau du cinéma français, c...
-4  input_reduction  Et pourtant on s’en Doutait !Second volet très...
+       attack_name target_dataset  test_index  \
+0  input_reduction       allocine           0
+1  input_reduction       allocine           1
+2  input_reduction       allocine           2
+3  input_reduction       allocine           3
+4  input_reduction       allocine           4
 
-                                      perturbed_text  \
-0  , histoire, touchante des bien (Mel, Ledger,.....
-1  pas aimé lui 2 car est.. Une.T. /-. Le, tout c...
-2                                     dessin qui sa.
-3  le renouveau, de chiant. l'objet est stylisé l...
-4    pourtant’en ! volet, sans et particulièrement..
+                                       original_text  \
+0  Magnifique épopée, une belle histoire, touchan...
+1  Je n'ai pas aimé mais pourtant je lui mets 2 é...
+2  Un dessin animé qui brille par sa féerie et se...
+3  Si c'est là le renouveau du cinéma français, c...
+4  Et pourtant on s’en Doutait !Second volet très...
+
+                                      perturbed_text  ground_truth  \
+0  , histoire, touchante des bien (Mel, Ledger,.....             1
+1  pas aimé lui 2 car est.. Une.T. /-. Le, tout c...             0
+2                                     dessin qui sa.             1
+3  le renouveau, de chiant. l'objet est stylisé l...             0
+4    pourtant’en ! volet, sans et particulièrement..             0
 
                                 original_output  \
 0  [0.00047096062917262316, 0.9995290040969849]
@@ -6043,26 +6050,19 @@ Results:
 3   [0.999725878238678, 0.00027412595227360725]
 4  [0.9996825456619263, 0.00031743431463837624]
 
-                             perturbed_output   status  \
-0  [0.012402723543345928, 0.9875972867012024]  success
-1  [0.9930082559585571, 0.006991744041442871]  success
-2    [0.4316840171813965, 0.5683159828186035]  success
-3  [0.9935886859893799, 0.006411298178136349]  success
-4  [0.9788817167282104, 0.021118290722370148]  success
+                             perturbed_output   status  num_queries  \
+0  [0.012402723543345928, 0.9875972867012024]  success           52
+1  [0.9930082559585571, 0.006991744041442871]  success          101
+2    [0.4316840171813965, 0.5683159828186035]  success           20
+3  [0.9935886859893799, 0.006411298178136349]  success           46
+4  [0.9788817167282104, 0.021118290722370148]  success           29
 
-  target_model_train_dataset  test_index  ground_truth  num_queries  \
-0                   allocine           0             1           52
-1                   allocine           1             0          101
-2                   allocine           2             1           20
-3                   allocine           3             0           46
-4                   allocine           4             0           29
-
-   frac_words_changed  attacked_all_instances
-0            0.300000                    True
-1            0.377049                    True
-2            0.272727                    True
-3            0.392857                    True
-4            0.352941                    True
+   frac_words_changed
+0            0.300000
+1            0.377049
+2            0.272727
+3            0.392857
+4            0.352941
 
 Attack time: 00:29:39
 Total time: 00:30:47

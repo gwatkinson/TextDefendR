@@ -6016,26 +6016,33 @@ Negative (100%) --> Positive (63%)
 Saving results to attacks/allocine\distilcamembert\textattack\bae\2000/...
 
 Results:
-    scenario target_model_dataset     target_model attack_toolchain  \
-0  sentiment             allocine  distilcamembert       textattack
-1  sentiment             allocine  distilcamembert       textattack
-2  sentiment             allocine  distilcamembert       textattack
-3  sentiment             allocine  distilcamembert       textattack
-4  sentiment             allocine  distilcamembert       textattack
+    scenario     target_model target_model_train_dataset attack_toolchain  \
+0  sentiment  distilcamembert                   allocine       textattack
+1  sentiment  distilcamembert                   allocine       textattack
+2  sentiment  distilcamembert                   allocine       textattack
+3  sentiment  distilcamembert                   allocine       textattack
+4  sentiment  distilcamembert                   allocine       textattack
 
-  attack_name                                      original_text  \
-0         bae  Magnifique épopée, une belle histoire, touchan...
-1         bae  Je n'ai pas aimé mais pourtant je lui mets 2 é...
-2         bae  Un dessin animé qui brille par sa féerie et se...
-3         bae  Si c'est là le renouveau du cinéma français, c...
-4         bae  Et pourtant on s’en Doutait !Second volet très...
+  attack_name target_dataset  test_index  \
+0         bae       allocine           0
+1         bae       allocine           1
+2         bae       allocine           2
+3         bae       allocine           3
+4         bae       allocine           4
 
-                                      perturbed_text  \
-0  belle temps, une belle histoire, touchante ave...
-1  du n'ai pas aimé mais pourtant je lui mets 2 é...
-2  Un dessin animé qui non par sa féerie et ses c...
+                                       original_text  \
+0  Magnifique épopée, une belle histoire, touchan...
+1  Je n'ai pas aimé mais pourtant je lui mets 2 é...
+2  Un dessin animé qui brille par sa féerie et se...
 3  Si c'est là le renouveau du cinéma français, c...
-4  Et pourtant on s’en Doutait !Second les très m...
+4  Et pourtant on s’en Doutait !Second volet très...
+
+                                      perturbed_text  ground_truth  \
+0  belle temps, une belle histoire, touchante ave...             1
+1  du n'ai pas aimé mais pourtant je lui mets 2 é...             0
+2  Un dessin animé qui non par sa féerie et ses c...             1
+3  Si c'est là le renouveau du cinéma français, c...             0
+4  Et pourtant on s’en Doutait !Second les très m...             0
 
                                 original_output  \
 0  [0.00047096062917262316, 0.9995290040969849]
@@ -6044,26 +6051,19 @@ Results:
 3   [0.999725878238678, 0.00027412595227360725]
 4  [0.9996825456619263, 0.00031743431463837624]
 
-                              perturbed_output   status  \
-0    [0.18987245857715607, 0.8101274967193604]   failed
-1    [0.06990174204111099, 0.9300982356071472]  success
-2    [0.9596356749534607, 0.04036440700292587]  success
-3     [0.4622066915035248, 0.5377933382987976]  success
-4  [0.9964210987091064, 0.0035789452958852053]   failed
+                              perturbed_output   status  num_queries  \
+0    [0.18987245857715607, 0.8101274967193604]   failed          183
+1    [0.06990174204111099, 0.9300982356071472]  success           85
+2    [0.9596356749534607, 0.04036440700292587]  success           48
+3     [0.4622066915035248, 0.5377933382987976]  success           58
+4  [0.9964210987091064, 0.0035789452958852053]   failed           40
 
-  target_model_train_dataset  test_index  ground_truth  num_queries  \
-0                   allocine           0             1          183
-1                   allocine           1             0           85
-2                   allocine           2             1           48
-3                   allocine           3             0           58
-4                   allocine           4             0           40
-
-   frac_words_changed  attacked_all_instances
-0            0.333333                    True
-1            0.016393                    True
-2            0.090909                    True
-3            0.142857                    True
-4            0.117647                    True
+   frac_words_changed
+0            0.333333
+1            0.016393
+2            0.090909
+3            0.142857
+4            0.117647
 
 Attack time: 03:22:21
 Total time: 03:23:29
