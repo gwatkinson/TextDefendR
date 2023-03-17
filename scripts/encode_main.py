@@ -200,7 +200,7 @@ def main(raw_args=None):
         file_name = args.prefix_file_name + "_" + file_name
     if args.test:
         file_name = "test_" + file_name
-    file_path = Path("data_tcab/reprs/samplewise", file_name)
+    file_path = Path("data_tcab/embeddings", file_name)
     mkfile_if_dne(file_path)
     holder_to_disk(holder, file_path)
     print(f"saved in {file_path}")

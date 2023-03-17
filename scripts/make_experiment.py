@@ -92,7 +92,7 @@ def df_to_instance_subset(df, known_samples):
         else:
             no_repr_count += 1
 
-    print(f"    cannot find repr. for {no_repr_count:,} / {len(df):,} instances")
+    print(f"    cannot find embeddings for {no_repr_count:,} / {len(df):,} instances")
 
     return out
 
@@ -126,7 +126,7 @@ def main(raw_args=None):
 
     lazy_loading = True
     known_instances = load_known_instances(
-        "data_tcab/reprs/samplewise",
+        "data_tcab/embeddings/",
         target_model=exp_args.target_model,
         target_dataset=exp_args.target_dataset,
         lazy_loading=lazy_loading,

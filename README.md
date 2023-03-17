@@ -14,13 +14,13 @@
     - [4.2.1. Download the Allociné dataset](#421-download-the-allociné-dataset)
     - [4.2.2. Run some attacks with TextAttack (optional)](#422-run-some-attacks-with-textattack-optional)
     - [4.2.3. Run attacks for TCAB dataset](#423-run-attacks-for-tcab-dataset)
+    - [4.2.4. Generate the attack dataset](#424-generate-the-attack-dataset)
   - [4.3. TCAB Benchmark](#43-tcab-benchmark)
-    - [4.3.1. Generate the whole dataset for detection model](#431-generate-the-whole-dataset-for-detection-model)
-    - [4.3.2. Encode the dataset with feature extraction](#432-encode-the-dataset-with-feature-extraction)
-    - [4.3.3. Split data by model and trained dataset](#433-split-data-by-model-and-trained-dataset)
-    - [4.3.4. Distribute data for detection experiments](#434-distribute-data-for-detection-experiments)
-    - [4.3.5. Merge experiment data with feature extraction](#435-merge-experiment-data-with-feature-extraction)
-    - [4.3.6. Run experiment](#436-run-experiment)
+    - [4.3.1. Encode the dataset with feature extraction](#431-encode-the-dataset-with-feature-extraction)
+    - [4.3.2. Split data by model and trained dataset](#432-split-data-by-model-and-trained-dataset)
+    - [4.3.3. Distribute data for detection experiments](#433-distribute-data-for-detection-experiments)
+    - [4.3.4. Merge experiment data with feature extraction](#434-merge-experiment-data-with-feature-extraction)
+    - [4.3.5. Run experiment](#435-run-experiment)
 
 ## 1. :mag_right: Overview
 
@@ -129,9 +129,9 @@ a database of attacks with a fine-tuned DistilCamemBERT model on the task of All
 
 Run
 ```{bash}
-python scripts/download_data.py
+python scripts/download_data.py allocine
 ```
-This generates a `train.csv`, `val.csv`, and `test.csv`.
+This generates a `train.csv`, `val.csv`, and `test.csv` in `data/allocine/` directory.
 
 #### 4.2.2. Run some attacks with TextAttack (optional)
 
@@ -196,28 +196,36 @@ options:
 
 :bulb: Notebook attack statistics: [attack_statistics.ipynb](/notebooks/attack_statistics.ipynb)
 
+#### 4.2.4. Generate the attack dataset
 
-### 4.3. TCAB Benchmark
-
-:globe_with_meridians: Reference: https://github.com/react-nlp/tcab_benchmark
-
-:bulb: **You can run all this section in the following notebook:** [run_all_benchmark.ipynb](/notebooks/run_all_benchmark.ipynb)
-
-#### 4.3.1. Generate the whole dataset for detection model
+Combines all attacks into a single csv file: `data_tcab/attack_dataset.csv`
 
 Run
 ```{bash}
 python scripts/generate_attack_dataset.py
 ```
 
-#### 4.3.2. Encode the dataset with feature extraction
+Our dataset is available on HuggingFace: https://huggingface.co/datasets/baptiste-pasquier/attack-dataset
 
-Extract complex features for the detection model :
+### 4.3. TCAB Benchmark
+
+:globe_with_meridians: Reference: https://github.com/react-nlp/tcab_benchmark
+
+:inbox_tray: If you do not have a `attack_dataset.csv` dataset, you can download it from HuggingFace:
+```{bash}
+python scripts/download_data.py attack_dataset
+```
+
+:bulb: **You can run all this section in the following notebook:** [run_all_benchmark.ipynb](/notebooks/run_all_benchmark.ipynb)
+
+#### 4.3.1. Encode the dataset with feature extraction
+
+Extract embeddings for the detection model :
 - TP: text properties
 - TM: target model properties
 - LM: language model properties
 
-The result is stored ase a `.joblib` file under `data_tcab/reprs/` directory.
+The result is stored ase a `.joblib` file under `data_tcab/embeddings/` directory.
 
 Run
 ```{bash}
@@ -277,7 +285,7 @@ python scripts/encode_main.py \
     --lm_proba_model cmarkea/distilcamembert-base \
     --prefix_file_name fr+small \
 ```
-This will create the file `data_tcab/reprs/samplewise/fr+small_distilcamembert_allocine_ALL_ALL.joblib`. This command is quite long, around 7 hours for the `Allociné` dataset.
+This will create the file `data_tcab/embeddings/fr+small_distilcamembert_allocine_ALL_ALL.joblib`. This command is quite long, around 7 hours for the `Allociné` dataset.
 
 To generate only the TP features with another model, run :
 ```{bash}
@@ -286,7 +294,7 @@ python scripts/encode_main.py \
     --prefix_file_name fr+canine \
     --tasks TP
 ```
-This will create the file `data_tcab/reprs/samplewise/fr+canine_distilcamembert_allocine_ALL_TP.joblib`. This is quite fast compared to the previous command (around 5 minutes).
+This will create the file `data_tcab/embeddings/fr+canine_distilcamembert_allocine_ALL_TP.joblib`. This is quite fast compared to the previous command (around 5 minutes).
 
 :bulb: Notebook step-by-step: [run_encode_main.ipynb](/notebooks/run_encode_main.ipynb)
 
@@ -294,13 +302,18 @@ This will create the file `data_tcab/reprs/samplewise/fr+canine_distilcamembert_
 
 :bulb: Notebook for feature extraction: [feature_extraction.ipynb](/notebooks/feature_extraction.ipynb)
 
-#### 4.3.3. Split data by model and trained dataset
+:inbox_tray: You can download the embeddings from HuggingFace:
+```{bash}
+python scripts/download_data.py attack_embeddings
+```
+
+#### 4.3.2. Split data by model and trained dataset
 
 ```{bash}
 python scripts/make_official_dataset_splits.py
 ```
 
-#### 4.3.4. Distribute data for detection experiments
+#### 4.3.3. Distribute data for detection experiments
 
 Create `train.csv`, `val.csv` and `test.csv` under `data_tcab/detection-experiments/` directory.
 ```{bash}
@@ -322,9 +335,9 @@ options:
                         Binary or multiclass detection. (default: clean_vs_all)
 ```
 
-#### 4.3.5. Merge experiment data with feature extraction
+#### 4.3.4. Merge experiment data with feature extraction
 
-Take an experiment directory that contains train and test csv files and make them into joblib files using cached features in `data_tcab/reprs/` directory.
+Take an experiment directory that contains train and test csv files and make them into joblib files using cached features in `data_tcab/embeddings/` directory.
 ```{bash}
 python scripts/make_experiment.py
 ```
@@ -340,7 +353,7 @@ options:
                         experiments/allocine/distilcamembert/clean_vs_all/)
 ```
 
-#### 4.3.6. Run experiment
+#### 4.3.5. Run experiment
 
 Take an experiment directory that contains train and test joblib files, then a classification model and log model, outputs and metrics in a unique subdirectory.
 ```{bash}
