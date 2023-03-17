@@ -328,11 +328,13 @@ def encode_all_properties(
             pass
         else:
             keys_to_rm.append(h)
+
+    len_holder = len(holder)
     _failed_extraction_count = 0
-    for _failed_extraction_count, k in enumerate(keys_to_rm):
+    for _failed_extraction_count, k in enumerate(keys_to_rm, start=1):
         del holder[k]
 
-    print("total failed extraction: ", _failed_extraction_count, "out of", len(holder))
+    print("total failed extraction: ", _failed_extraction_count, "out of", len_holder)
     print("a sample holder value for sanity check")
     print()
     print()
@@ -369,11 +371,13 @@ def encode_only_tp_model_properties(
             pass
         else:
             keys_to_rm.append(h)
+
+    len_holder = len(holder)
     _failed_extraction_count = 0
-    for _failed_extraction_count, k in enumerate(keys_to_rm):
+    for _failed_extraction_count, k in enumerate(keys_to_rm, start=1):
         del holder[k]
 
-    print("total failed extraction: ", _failed_extraction_count, "out of", len(holder))
+    print("total failed extraction: ", _failed_extraction_count, "out of", len_holder)
     print("a sample holder value for sanity check")
     print()
     print()
