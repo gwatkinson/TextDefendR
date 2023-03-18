@@ -24,7 +24,11 @@
 
 ## 1. :mag_right: Overview
 
-TODO
+TextDefendR is a library for detecting adversarial attacks on NLP classification models.
+It provides:
+- a script to generate attacks on a Transformers model and create a dataset of several attacks;
+- several tools to extract embeddings on generated samples;
+- experiments to train classifiers for attack detection.
 
 ## 2. :hammer_and_wrench: Installation
 
@@ -53,11 +57,11 @@ poe torch_cuda
 :bulb: Notebook: [quickstart.ipynb](notebooks/quickstart.ipynb)
 
 ```{python}
-from textdefendr.encoder import TextEncoder
-from textdefendr.data import load_dataset
+import torch
+from datasets import load_dataset
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
-import torch
+from textdefendr.encoder import TextEncoder
 ```
 
 ```{python}
@@ -65,13 +69,24 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 ```
 
+The dataset contains 9000 samples of attacks on Allociné + 20000 original reviews.
+The `attack_name` column shows the name of the attack used, or "clean" for original texts.
+The `perturbed_text` column contains the text modified by an attack, or the original text for unattacked samples.
+
 ```{python}
-df = load_dataset()
-df = df.sample(1000)
-X = df["text"]
+df = load_dataset("baptiste-pasquier/attack-dataset", split="all").to_pandas()
+df = df.sample(1000, random_state=42)
+```
+
+To train a binary classification model, you can consider the binary variable that indicates whether a text comes from an attack.
+
+```{python}
+X = df["perturbed_text"]
 y = df["perturbed"]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 ```
+
+Let's encode text samples with several language model embeddings.
 
 ```{python}
 encoder = TextEncoder(
@@ -81,6 +96,8 @@ encoder = TextEncoder(
     device=device)
 X_train_encoded = encoder.fit_transform(X_train)
 ```
+
+Now it is possible to use any usual classifier.
 
 ```{python}
 clf = LogisticRegression(random_state=42)

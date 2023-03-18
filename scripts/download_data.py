@@ -27,9 +27,7 @@ def download_allocine():
 
 def download_attack_dataset():
     # load dataset from the HuggingFace Hub
-    dataset = load_dataset(
-        "baptiste-pasquier/attack-dataset", use_auth_token=True, split="all"
-    )
+    dataset = load_dataset("baptiste-pasquier/attack-dataset", split="all")
 
     export_dir = Path("data_tcab/")
     export_dir.mkdir(parents=True, exist_ok=True)
