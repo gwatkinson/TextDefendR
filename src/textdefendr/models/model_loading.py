@@ -1,4 +1,4 @@
-from nlp_adversarial_attacks.models.target_models import AutoClassifier
+from textdefendr.models.target_models import AutoClassifier
 
 
 def _get_model(

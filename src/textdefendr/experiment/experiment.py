@@ -3,8 +3,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from nlp_adversarial_attacks.utils.file_io import dump_json, mkdir_if_dne, vim_write_zz
-from nlp_adversarial_attacks.utils.pandas_ops import show_df_stats
+from textdefendr.utils.file_io import dump_json, mkdir_if_dne, vim_write_zz
+from textdefendr.utils.pandas_ops import show_df_stats
 
 
 class Experiment:

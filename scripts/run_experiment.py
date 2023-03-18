@@ -16,12 +16,9 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.utils import shuffle as shuffle
 
-from nlp_adversarial_attacks.experiment import ExperimentModel
-from nlp_adversarial_attacks.feature_extraction import (
-    FeatureExtractor,
-    get_feature_dim_names,
-)
-from nlp_adversarial_attacks.utils.file_io import mkdir_if_dne
+from textdefendr.experiment import ExperimentModel
+from textdefendr.feature_extraction import FeatureExtractor, get_feature_dim_names
+from textdefendr.utils.file_io import mkdir_if_dne
 
 
 def check_data_experiments(experiment_dir):

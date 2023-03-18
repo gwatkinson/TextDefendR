@@ -1,7 +1,7 @@
 import torch
 from textattack.models.wrappers import HuggingFaceModelWrapper
 
-from nlp_adversarial_attacks.models import AutoClassifier
+from textdefendr.models import AutoClassifier
 
 
 class ModelWrapper(HuggingFaceModelWrapper):

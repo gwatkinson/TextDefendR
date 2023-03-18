@@ -10,11 +10,11 @@ from transformers import (
     GPT2TokenizerFast,
 )
 
-from nlp_adversarial_attacks.feature_extraction import FeatureExtractor
-from nlp_adversarial_attacks.models.model_loading import load_target_model
-from nlp_adversarial_attacks.utils.hashing import get_pk_tuple, hash_pk_tuple
-from nlp_adversarial_attacks.utils.magic_vars import NUM_LABELS_LOOKUP
-from nlp_adversarial_attacks.utils.pandas_ops import no_duplicate_index
+from textdefendr.feature_extraction import FeatureExtractor
+from textdefendr.models.model_loading import load_target_model
+from textdefendr.utils.hashing import get_pk_tuple, hash_pk_tuple
+from textdefendr.utils.magic_vars import NUM_LABELS_LOOKUP
+from textdefendr.utils.pandas_ops import no_duplicate_index
 
 assert (
     torch.cuda.is_available()

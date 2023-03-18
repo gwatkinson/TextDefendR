@@ -5,17 +5,14 @@ from pathlib import Path
 import joblib
 import pandas as pd
 
-from nlp_adversarial_attacks.batch_encoding import encode_all_properties
-from nlp_adversarial_attacks.utils.file_io import mkfile_if_dne
-from nlp_adversarial_attacks.utils.magic_vars import (
+from textdefendr.batch_encoding import encode_all_properties
+from textdefendr.utils.file_io import mkfile_if_dne
+from textdefendr.utils.magic_vars import (
     SUPPORTED_ATTACKS,
     SUPPORTED_TARGET_DATASETS,
     SUPPORTED_TARGET_MODELS,
 )
-from nlp_adversarial_attacks.utils.pandas_ops import (
-    restrict_max_instance_for_class,
-    show_df_stats,
-)
+from textdefendr.utils.pandas_ops import restrict_max_instance_for_class, show_df_stats
 
 
 def holder_to_disk(holder, fname):

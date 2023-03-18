@@ -1,6 +1,6 @@
 import hashlib
 
-from nlp_adversarial_attacks.utils.magic_vars import PRIMARY_KEY_FIELDS
+from textdefendr.utils.magic_vars import PRIMARY_KEY_FIELDS
 
 
 def hash_pk_tuple(tup):

@@ -1,6 +1,6 @@
-# NLP adversarial attacks <!-- omit from toc -->
+# TextDefendR: Detecting adversarial attacks on French text classifiers <!-- omit from toc -->
 
-[![Code quality](https://github.com/baptiste-pasquier/nlp-adversarial-attacks/actions/workflows/quality.yml/badge.svg)](https://github.com/baptiste-pasquier/nlp-adversarial-attacks/actions/workflows/quality.yml)
+[![Code quality](https://github.com/baptiste-pasquier/textdefendr/actions/workflows/quality.yml/badge.svg)](https://github.com/baptiste-pasquier/textdefendr/actions/workflows/quality.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 - [1. :mag\_right: Overview](#1-mag_right-overview)
@@ -30,7 +30,7 @@ TODO
 
 1. Clone the repository
 ```bash
-git clone https://github.com/baptiste-pasquier/nlp-adversarial-attacks
+git clone https://github.com/baptiste-pasquier/textdefendr
 ```
 
 2. Install the project
@@ -53,8 +53,8 @@ poe torch_cuda
 :bulb: Notebook: [quickstart.ipynb](notebooks/quickstart.ipynb)
 
 ```{python}
-from nlp_adversarial_attacks.encoder import TextEncoder
-from nlp_adversarial_attacks.data import load_dataset
+from textdefendr.encoder import TextEncoder
+from textdefendr.data import load_dataset
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 import torch

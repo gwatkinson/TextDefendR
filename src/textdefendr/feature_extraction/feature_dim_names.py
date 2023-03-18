@@ -2,10 +2,8 @@ import inspect
 
 import pandas as pd
 
-from nlp_adversarial_attacks.feature_extraction.feature_extractor import (
-    FeatureExtractor,
-)
-from nlp_adversarial_attacks.models import load_target_model
+from textdefendr.feature_extraction.feature_extractor import FeatureExtractor
+from textdefendr.models import load_target_model
 
 
 def get_feature_dim_names(feature_fcn_name):

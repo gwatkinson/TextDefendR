@@ -4,11 +4,11 @@ import time
 
 import numpy as np
 
-from nlp_adversarial_attacks.feature_extraction.extractors.utils import (
+from textdefendr.feature_extraction.extractors.utils import (
     EXTR_FCNS_BY_NAME,
     EXTR_FCNS_BY_TAG,
 )
-from nlp_adversarial_attacks.feature_extraction.utils import save_extracted_samples
+from textdefendr.feature_extraction.utils import save_extracted_samples
 
 
 class FeatureExtractor:

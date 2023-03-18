@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from nlp_adversarial_attacks.utils.magic_vars import SUPPORTED_ATTACKS
-from nlp_adversarial_attacks.utils.pandas_ops import (
+from textdefendr.utils.magic_vars import SUPPORTED_ATTACKS
+from textdefendr.utils.pandas_ops import (
     concat_multiple_df,
     drop_for_column_outside_of_values,
     refresh_index,

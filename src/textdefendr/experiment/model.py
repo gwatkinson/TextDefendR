@@ -18,7 +18,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder
 
-from nlp_adversarial_attacks.utils.file_io import mkdir_if_dne
+from textdefendr.utils.file_io import mkdir_if_dne
 
 
 class ExperimentModel:

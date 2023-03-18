@@ -12,8 +12,8 @@ from transformers import (
     GPT2TokenizerFast,
 )
 
-from nlp_adversarial_attacks.feature_extraction import FeatureExtractor
-from nlp_adversarial_attacks.models.model_loading import load_target_model
+from textdefendr.feature_extraction import FeatureExtractor
+from textdefendr.models.model_loading import load_target_model
 
 
 class TextEncoder(TransformerMixin, BaseEstimator):

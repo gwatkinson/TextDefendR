@@ -11,7 +11,7 @@ from IPython.core.display import HTML, display
 from pandas.io.formats.style import Styler
 from sklearn.metrics import ConfusionMatrixDisplay
 
-from nlp_adversarial_attacks.utils.file_io import load_json
+from textdefendr.utils.file_io import load_json
 
 
 def display_side_by_side(dfs: list[Union[pd.DataFrame, Styler]]):

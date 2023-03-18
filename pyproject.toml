@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "nlp-adversarial-attacks"
+name = "textdefendr"
 version = "0.1.0"
 description = ""
 authors = ["Baptiste Pasquier <pasquierbaptiste@hotmail.fr>"]
 readme = "README.md"
-packages = [{include = "nlp_adversarial_attacks", from = "src"}]
+packages = [{include = "textdefendr", from = "src"}]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11"
