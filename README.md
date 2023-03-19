@@ -3,26 +3,28 @@
 [![Code quality](https://github.com/baptiste-pasquier/textdefendr/actions/workflows/quality.yml/badge.svg)](https://github.com/baptiste-pasquier/textdefendr/actions/workflows/quality.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-- [1. :mag\_right: Overview](#1-mag_right-overview)
-- [2. :hammer\_and\_wrench: Installation](#2-hammer_and_wrench-installation)
-- [3. :arrow\_forward: Quickstart](#3-arrow_forward-quickstart)
-- [4. :memo: Usage](#4-memo-usage)
-  - [4.1. DistilCamemBERT fine-tuning on Allociné](#41-distilcamembert-fine-tuning-on-allociné)
-    - [4.1.1. Model fine-tuning (optional)](#411-model-fine-tuning-optional)
-    - [4.1.2. Model evaluation](#412-model-evaluation)
-  - [4.2. TCAB Dataset Generation](#42-tcab-dataset-generation)
-    - [4.2.1. Download the Allociné dataset](#421-download-the-allociné-dataset)
-    - [4.2.2. Run some attacks with TextAttack (optional)](#422-run-some-attacks-with-textattack-optional)
-    - [4.2.3. Run attacks for TCAB dataset](#423-run-attacks-for-tcab-dataset)
-    - [4.2.4. Generate the attack dataset](#424-generate-the-attack-dataset)
-  - [4.3. TCAB Benchmark](#43-tcab-benchmark)
-    - [4.3.1. Encode the dataset with feature extraction](#431-encode-the-dataset-with-feature-extraction)
-    - [4.3.2. Split data by model and trained dataset](#432-split-data-by-model-and-trained-dataset)
-    - [4.3.3. Distribute data for detection experiments](#433-distribute-data-for-detection-experiments)
-    - [4.3.4. Merge experiment data with feature extraction](#434-merge-experiment-data-with-feature-extraction)
-    - [4.3.5. Run experiment](#435-run-experiment)
+- [:mag\_right: Overview](#mag_right-overview)
+- [:hammer\_and\_wrench: Installation](#hammer_and_wrench-installation)
+- [:arrow\_forward: Quickstart](#arrow_forward-quickstart)
+- [:memo: Usage](#memo-usage)
+  - [1. DistilCamemBERT fine-tuning on Allociné](#1-distilcamembert-fine-tuning-on-allociné)
+    - [1.1. Model fine-tuning (optional)](#11-model-fine-tuning-optional)
+    - [1.2. Model evaluation](#12-model-evaluation)
+  - [2. TCAB Dataset Generation](#2-tcab-dataset-generation)
+    - [2.1. Download the Allociné dataset](#21-download-the-allociné-dataset)
+    - [2.2. Run some attacks with TextAttack (optional)](#22-run-some-attacks-with-textattack-optional)
+    - [2.3. Run attacks for TCAB dataset](#23-run-attacks-for-tcab-dataset)
+    - [2.4. Generate the attack dataset](#24-generate-the-attack-dataset)
+  - [3. TCAB Benchmark](#3-tcab-benchmark)
+    - [3.1. Encode the dataset with feature extraction](#31-encode-the-dataset-with-feature-extraction)
+    - [3.2. Split data by model and trained dataset](#32-split-data-by-model-and-trained-dataset)
+    - [3.3. Distribute data for detection experiments](#33-distribute-data-for-detection-experiments)
+    - [3.4. Merge experiment data with feature extraction](#34-merge-experiment-data-with-feature-extraction)
+    - [3.5. Run experiment](#35-run-experiment)
+- [References](#references)
+- [Acknowledgments](#acknowledgments)
 
-## 1. :mag_right: Overview
+## :mag_right: Overview
 
 TextDefendR is a library for detecting adversarial attacks on NLP classification models.
 It provides:
@@ -30,7 +32,9 @@ It provides:
 - several tools to extract embeddings on generated samples;
 - experiments to train classifiers for attack detection.
 
-## 2. :hammer_and_wrench: Installation
+The project reproduces the results from the following paper: "*Identifying Adversarial Attacks on Text Classifiers*" [[1]](#1) and uses the associated code (see [Acknowledgments](#6-acknowledgments)).
+
+## :hammer_and_wrench: Installation
 
 1. Clone the repository
 ```bash
@@ -52,11 +56,11 @@ pip install -e .
 poe torch_cuda
 ```
 
-## 3. :arrow_forward: Quickstart
+## :arrow_forward: Quickstart
 
 :bulb: Notebook: [quickstart.ipynb](notebooks/quickstart.ipynb)
 
-```{python}
+```python
 import torch
 from datasets import load_dataset
 from sklearn.linear_model import LogisticRegression
@@ -64,7 +68,7 @@ from sklearn.model_selection import train_test_split
 from textdefendr.encoder import TextEncoder
 ```
 
-```{python}
+```python
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 ```
@@ -73,14 +77,14 @@ The dataset contains 9000 samples of attacks on Allociné + 20000 original revie
 The `attack_name` column shows the name of the attack used, or "clean" for original texts.
 The `perturbed_text` column contains the text modified by an attack, or the original text for unattacked samples.
 
-```{python}
+```python
 df = load_dataset("baptiste-pasquier/attack-dataset", split="all").to_pandas()
 df = df.sample(1000, random_state=42)
 ```
 
 To train a binary classification model, you can consider the binary variable that indicates whether a text comes from an attack.
 
-```{python}
+```python
 X = df["perturbed_text"]
 y = df["perturbed"]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -88,7 +92,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 Let's encode text samples with several language model embeddings.
 
-```{python}
+```python
 encoder = TextEncoder(
     enable_tp=True,
     enable_lm_perplexity=True,
@@ -99,21 +103,21 @@ X_train_encoded = encoder.fit_transform(X_train)
 
 Now it is possible to use any usual classifier.
 
-```{python}
+```python
 clf = LogisticRegression(random_state=42)
 clf.fit(X_train_encoded, y_train)
 ```
 
-```{python}
+```python
 X_test_encoded = encoder.transform(X_test)
 clf.score(X_test_encoded, y_test)
 ```
 
-## 4. :memo: Usage
+## :memo: Usage
 
-### 4.1. DistilCamemBERT fine-tuning on Allociné
+### 1. DistilCamemBERT fine-tuning on Allociné
 
-#### 4.1.1. Model fine-tuning (optional)
+#### 1.1. Model fine-tuning (optional)
 
 
 
@@ -125,7 +129,7 @@ textattack train --model cmarkea/distilcamembert-base --dataset allocine --num-e
 
 The fine-tuned model is available on HuggingFace: https://huggingface.co/baptiste-pasquier/distilcamembert-allocine
 
-#### 4.1.2. Model evaluation
+#### 1.2. Model evaluation
 - Evaluate the fine-tuned model with TextAttack:
 ```{bash}
 textattack eval --model-from-huggingface baptiste-pasquier/distilcamembert-allocine --dataset-from-huggingface allocine --num-examples 1000 --dataset-split test
@@ -135,14 +139,14 @@ textattack eval --model-from-huggingface baptiste-pasquier/distilcamembert-alloc
 The model offers an accuracy score of 97%.
 
 
-### 4.2. TCAB Dataset Generation
+### 2. TCAB Dataset Generation
 
 This section provides
 a database of attacks with a fine-tuned DistilCamemBERT model on the task of Allociné reviews classification.
 
 :globe_with_meridians: Reference: https://github.com/react-nlp/tcab_generation
 
-#### 4.2.1. Download the Allociné dataset
+#### 2.1. Download the Allociné dataset
 
 Run
 ```{bash}
@@ -150,14 +154,14 @@ python scripts/download_data.py allocine
 ```
 This generates a `train.csv`, `val.csv`, and `test.csv` in `data/allocine/` directory.
 
-#### 4.2.2. Run some attacks with TextAttack (optional)
+#### 2.2. Run some attacks with TextAttack (optional)
 
 Run
 ```{bash}
 textattack attack --model-from-huggingface baptiste-pasquier/distilcamembert-allocine --dataset-from-huggingface allocine --recipe deepwordbug --num-examples 50
 ```
 
-#### 4.2.3. Run attacks for TCAB dataset
+#### 2.3. Run attacks for TCAB dataset
 
 Run
 ```{bash}
@@ -213,7 +217,7 @@ options:
 
 :bulb: Notebook attack statistics: [attack_statistics.ipynb](/notebooks/attack_statistics.ipynb)
 
-#### 4.2.4. Generate the attack dataset
+#### 2.4. Generate the attack dataset
 
 Combines all attacks into a single csv file: `data_tcab/attack_dataset.csv`
 
@@ -224,7 +228,7 @@ python scripts/generate_attack_dataset.py
 
 Our dataset is available on HuggingFace: https://huggingface.co/datasets/baptiste-pasquier/attack-dataset
 
-### 4.3. TCAB Benchmark
+### 3. TCAB Benchmark
 
 :globe_with_meridians: Reference: https://github.com/react-nlp/tcab_benchmark
 
@@ -235,7 +239,7 @@ python scripts/download_data.py attack_dataset
 
 :bulb: **You can run all this section in the following notebook:** [run_all_benchmark.ipynb](/notebooks/run_all_benchmark.ipynb)
 
-#### 4.3.1. Encode the dataset with feature extraction
+#### 3.1. Encode the dataset with feature extraction
 
 Extract embeddings for the detection model :
 - TP: text properties
@@ -324,13 +328,13 @@ This will create the file `data_tcab/embeddings/fr+canine_distilcamembert_alloci
 python scripts/download_data.py attack_embeddings
 ```
 
-#### 4.3.2. Split data by model and trained dataset
+#### 3.2. Split data by model and trained dataset
 
 ```{bash}
 python scripts/make_official_dataset_splits.py
 ```
 
-#### 4.3.3. Distribute data for detection experiments
+#### 3.3. Distribute data for detection experiments
 
 Create `train.csv`, `val.csv` and `test.csv` under `data_tcab/detection-experiments/` directory.
 ```{bash}
@@ -355,7 +359,7 @@ options:
                         Binary or multiclass detection. (default: clean_vs_all)
 ```
 
-#### 4.3.4. Merge experiment data with feature extraction
+#### 3.4. Merge experiment data with feature extraction
 
 Take an experiment directory that contains train and test csv files and make them into joblib files using cached features in `data_tcab/embeddings/` directory.
 ```{bash}
@@ -373,7 +377,7 @@ options:
                         experiments/allocine/distilcamembert/default/clean_vs_all/)
 ```
 
-#### 4.3.5. Run experiment
+#### 3.5. Run experiment
 
 Take an experiment directory that contains train and test joblib files, then a classification model and log model, outputs and metrics in a unique subdirectory.
 ```{bash}
@@ -419,3 +423,13 @@ options:
   --disable_tune        Disable hyperparameters tuning with gridsearch. (default:  
                         False)
 ```
+
+## References
+
+<a id="1">[1]</a> Xie, Zhouhang, et al. "[Identifying adversarial attacks on text classifiers](https://arxiv.org/abs/2201.08555)". arXiv:2201.08555 (2022).
+
+## Acknowledgments
+
+The project relies mainly on the following repositories:
+- https://github.com/REACT-NLP/tcab_generation
+- https://github.com/REACT-NLP/tcab_benchmark
